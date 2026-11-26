@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Replay — Regicide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2215.5%22%20fill%3D%22%23d4a017%22%2F%3E%3Cg%20fill%3D%22%23101a17%22%20transform%3D%22translate%283.2%203.2%29%20scale%280.8%29%22%3E%3Cpath%20d%3D%22M4.5%2022.5V10.2l4.9%204.4L16%206.4l6.6%208.2%204.9-4.4v12.3z%22%2F%3E%3Crect%20x%3D%224.5%22%20y%3D%2222.3%22%20width%3D%2223%22%20height%3D%224.4%22%20rx%3D%221.4%22%2F%3E%3Ccircle%20cx%3D%224.9%22%20cy%3D%229.4%22%20r%3D%221.9%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%225.2%22%20r%3D%222.1%22%2F%3E%3Ccircle%20cx%3D%2227.1%22%20cy%3D%229.4%22%20r%3D%221.9%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="/style.css">
+<style>
+:root{--seat-red:#c0392b;--seat-blue:#3f7fbf;--seat-green:#3fa66b;--seat-black:#8a8a8a}
+body{margin:0;min-height:100vh}
+#viewer{max-width:1080px;margin:0 auto;padding:18px 18px 60px}
+.rv-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.rv-title{display:flex;flex-direction:column;gap:2px}
+.rv-title h1{margin:0;font-size:19px;letter-spacing:.04em}
+.rv-sub{margin:0;color:var(--ink-dim);font-size:12.5px}
+.rv-exit{padding:8px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.2);color:var(--ink);text-decoration:none;font-size:13px;background:rgba(255,255,255,.05)}
+.rv-exit:hover{background:rgba(255,255,255,.12)}
+.rv-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border:1px solid currentColor;margin-left:8px;vertical-align:2px}
+.rv-badge.is-won{color:#7fd1a0}.rv-badge.is-lost{color:#e8887e}
+.rv-controls{display:flex;align-items:center;gap:10px;margin:10px 0 14px}
+.rv-btn{padding:8px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:var(--ink);font:inherit;cursor:pointer;min-width:64px}
+.rv-btn:hover{background:rgba(255,255,255,.12)}
+.rv-btn:disabled{opacity:.35;cursor:default}
+.rv-range{flex:1;accent-color:var(--gold)}
+.rv-step{font-variant-numeric:tabular-nums;color:var(--ink-dim);font-size:12.5px;min-width:82px;text-align:right}
+.rv-move{padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.08);margin-bottom:14px}
+.rv-move-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.rv-move-head h2{margin:0;font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-dim)}
+.rv-move-what{font-size:clamp(15px,2vw,18px);font-weight:600;margin:0 0 8px}
+.rv-move-cards{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+.rv-move-cards img{width:62px;aspect-ratio:2.5/3.5;object-fit:cover;border-radius:6px;box-shadow:0 3px 10px #0007}
+.rv-events{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.rv-events li{display:flex;gap:8px;font-size:13px;line-height:1.45}
+.rv-events li b{color:var(--ink);font-weight:600}
+.rv-events li span{color:var(--ink-dim)}
+.rv-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:760px){.rv-grid{grid-template-columns:1fr}}
+.rv-panel{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+.rv-panel h2{margin:0 0 8px;font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-dim)}
+.rv-table{display:flex;gap:14px;align-items:flex-start}
+.rv-royal{display:grid;justify-items:center;gap:6px}
+.rv-royal img{width:96px;aspect-ratio:2.5/3.5;object-fit:cover;border-radius:7px;box-shadow:0 4px 14px #0008}
+.rv-royal .rv-royal-name{font-size:12.5px;color:var(--ink-dim)}
+.rv-stats{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;font-size:13px}
+.rv-stats dt{color:var(--ink-dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase;align-self:center}
+.rv-stats dd{margin:0;font-variant-numeric:tabular-nums}
+.rv-seats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.rv-seat{display:grid;justify-items:start;gap:1px;padding:6px 11px;border-radius:9px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--c);color:inherit;font:inherit;cursor:pointer;text-align:left}
+.rv-seat.is-on{background:color-mix(in srgb,var(--c) 18%,transparent);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 55%,transparent)}
+.rv-seat.is-active{outline:1px dashed color-mix(in srgb,var(--c) 70%,transparent);outline-offset:2px}
+.rv-seat-name{font-size:13px;font-weight:600}
+.rv-seat-count{font-size:10.5px;color:var(--ink-dim)}
+.rv-hand{display:flex;gap:7px;flex-wrap:wrap}
+.rv-card{width:62px;aspect-ratio:2.5/3.5;object-fit:cover;border-radius:6px;box-shadow:0 2px 8px #0007}
+.rv-card-wrap{display:grid;justify-items:center;gap:2px}
+.rv-card-label{font-size:10.5px;color:var(--ink-dim)}
+.rv-card-name{display:inline-flex;align-items:center;gap:2px}
+.rv-move-what .rv-card-name{font-size:1em}
+.rv-note{color:var(--ink-dim);font-size:13px;margin:6px 0}
+.rv-empty{color:var(--ink-dim);font-size:13px;margin:0}
+.rv-foot{margin-top:18px;color:var(--ink-dim);font-size:11px;opacity:.75}
+</style>
+</head><body>
+<div id="viewer"></div>
+<script type="module" src="/replay-viewer.js"></script>
+</body></html>

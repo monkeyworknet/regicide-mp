@@ -1,0 +1,438 @@
+{
+ "version": 1,
+ "source": "docs/research/01-rules-dossier.md",
+ "cards": {
+  "AC": {
+   "title": "Ace of Clubs — Animal Companion",
+   "value": "1 to attack · 1 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Play alone, or pair with one other card (never a Jester).",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "2C": {
+   "title": "Two of Clubs",
+   "value": "2 to attack · 2 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Combos must total 10 or less — up to 5 of these.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "3C": {
+   "title": "Three of Clubs",
+   "value": "3 to attack · 3 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Combos must total 10 or less — up to 3 of these.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "4C": {
+   "title": "Four of Clubs",
+   "value": "4 to attack · 4 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "5C": {
+   "title": "Five of Clubs",
+   "value": "5 to attack · 5 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "6C": {
+   "title": "Six of Clubs",
+   "value": "6 to attack · 6 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "7C": {
+   "title": "Seven of Clubs",
+   "value": "7 to attack · 7 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "8C": {
+   "title": "Eight of Clubs",
+   "value": "8 to attack · 8 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "9C": {
+   "title": "Nine of Clubs",
+   "value": "9 to attack · 9 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "10C": {
+   "title": "Ten of Clubs",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "JC": {
+   "title": "Jack of Clubs",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Also a castle enemy: attack 10, health 20. Kill it exactly to recruit it.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "QC": {
+   "title": "Queen of Clubs",
+   "value": "15 to attack · 15 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Also a castle enemy: attack 15, health 30. Kill it exactly to recruit it.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "KC": {
+   "title": "King of Clubs",
+   "value": "20 to attack · 20 when discarded",
+   "power": "Damage from this play is doubled.",
+   "note": "Also a castle enemy: attack 20, health 40. Kill it exactly to recruit it.",
+   "suit": "Clubs",
+   "symbol": "♣"
+  },
+  "AD": {
+   "title": "Ace of Diamonds — Animal Companion",
+   "value": "1 to attack · 1 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Play alone, or pair with one other card (never a Jester).",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "2D": {
+   "title": "Two of Diamonds",
+   "value": "2 to attack · 2 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Combos must total 10 or less — up to 5 of these.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "3D": {
+   "title": "Three of Diamonds",
+   "value": "3 to attack · 3 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Combos must total 10 or less — up to 3 of these.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "4D": {
+   "title": "Four of Diamonds",
+   "value": "4 to attack · 4 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "5D": {
+   "title": "Five of Diamonds",
+   "value": "5 to attack · 5 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "6D": {
+   "title": "Six of Diamonds",
+   "value": "6 to attack · 6 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "7D": {
+   "title": "Seven of Diamonds",
+   "value": "7 to attack · 7 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "8D": {
+   "title": "Eight of Diamonds",
+   "value": "8 to attack · 8 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "9D": {
+   "title": "Nine of Diamonds",
+   "value": "9 to attack · 9 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "10D": {
+   "title": "Ten of Diamonds",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "JD": {
+   "title": "Jack of Diamonds",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Also a castle enemy: attack 10, health 20. Kill it exactly to recruit it.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "QD": {
+   "title": "Queen of Diamonds",
+   "value": "15 to attack · 15 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Also a castle enemy: attack 15, health 30. Kill it exactly to recruit it.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "KD": {
+   "title": "King of Diamonds",
+   "value": "20 to attack · 20 when discarded",
+   "power": "Draw cards equal to this play's total.",
+   "note": "Also a castle enemy: attack 20, health 40. Kill it exactly to recruit it.",
+   "suit": "Diamonds",
+   "symbol": "♦"
+  },
+  "AH": {
+   "title": "Ace of Hearts — Animal Companion",
+   "value": "1 to attack · 1 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Play alone, or pair with one other card (never a Jester).",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "2H": {
+   "title": "Two of Hearts",
+   "value": "2 to attack · 2 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Combos must total 10 or less — up to 5 of these.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "3H": {
+   "title": "Three of Hearts",
+   "value": "3 to attack · 3 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Combos must total 10 or less — up to 3 of these.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "4H": {
+   "title": "Four of Hearts",
+   "value": "4 to attack · 4 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "5H": {
+   "title": "Five of Hearts",
+   "value": "5 to attack · 5 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "6H": {
+   "title": "Six of Hearts",
+   "value": "6 to attack · 6 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "7H": {
+   "title": "Seven of Hearts",
+   "value": "7 to attack · 7 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "8H": {
+   "title": "Eight of Hearts",
+   "value": "8 to attack · 8 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "9H": {
+   "title": "Nine of Hearts",
+   "value": "9 to attack · 9 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "10H": {
+   "title": "Ten of Hearts",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "JH": {
+   "title": "Jack of Hearts",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Also a castle enemy: attack 10, health 20. Kill it exactly to recruit it.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "QH": {
+   "title": "Queen of Hearts",
+   "value": "15 to attack · 15 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Also a castle enemy: attack 15, health 30. Kill it exactly to recruit it.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "KH": {
+   "title": "King of Hearts",
+   "value": "20 to attack · 20 when discarded",
+   "power": "Shuffle the discard pile, then put that many cards under the tavern deck.",
+   "note": "Also a castle enemy: attack 20, health 40. Kill it exactly to recruit it.",
+   "suit": "Hearts",
+   "symbol": "♥"
+  },
+  "AS": {
+   "title": "Ace of Spades — Animal Companion",
+   "value": "1 to attack · 1 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Play alone, or pair with one other card (never a Jester).",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "2S": {
+   "title": "Two of Spades",
+   "value": "2 to attack · 2 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Combos must total 10 or less — up to 5 of these.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "3S": {
+   "title": "Three of Spades",
+   "value": "3 to attack · 3 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Combos must total 10 or less — up to 3 of these.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "4S": {
+   "title": "Four of Spades",
+   "value": "4 to attack · 4 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "5S": {
+   "title": "Five of Spades",
+   "value": "5 to attack · 5 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Combos must total 10 or less — up to 2 of these.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "6S": {
+   "title": "Six of Spades",
+   "value": "6 to attack · 6 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "7S": {
+   "title": "Seven of Spades",
+   "value": "7 to attack · 7 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "8S": {
+   "title": "Eight of Spades",
+   "value": "8 to attack · 8 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "9S": {
+   "title": "Nine of Spades",
+   "value": "9 to attack · 9 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "10S": {
+   "title": "Ten of Spades",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Too high to combine: play it alone.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "JS": {
+   "title": "Jack of Spades",
+   "value": "10 to attack · 10 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Also a castle enemy: attack 10, health 20. Kill it exactly to recruit it.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "QS": {
+   "title": "Queen of Spades",
+   "value": "15 to attack · 15 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Also a castle enemy: attack 15, health 30. Kill it exactly to recruit it.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "KS": {
+   "title": "King of Spades",
+   "value": "20 to attack · 20 when discarded",
+   "power": "Reduce this enemy's attack by this play's total.",
+   "note": "Also a castle enemy: attack 20, health 40. Kill it exactly to recruit it.",
+   "suit": "Spades",
+   "symbol": "♠"
+  },
+  "J1": {
+   "title": "Jester",
+   "value": "0 to attack · 0 when discarded",
+   "power": "Cancels the current enemy's suit immunity (multiplayer).",
+   "note": "Solo: flip a Jester to discard your hand and refill to 8.",
+   "suit": "none",
+   "symbol": "★"
+  },
+  "J2": {
+   "title": "Jester",
+   "value": "0 to attack · 0 when discarded",
+   "power": "Cancels the current enemy's suit immunity (multiplayer).",
+   "note": "Solo: flip a Jester to discard your hand and refill to 8.",
+   "suit": "none",
+   "symbol": "★"
+  }
+ }
+}

@@ -1,0 +1,179 @@
+{
+ "actions": [
+  {
+   "cardIds": [
+    "AH",
+    "10D"
+   ],
+   "type": "play"
+  },
+  {
+   "cardId": "6H",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "4H",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "AC",
+    "6D"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "AD",
+    "7C"
+   ],
+   "type": "play"
+  },
+  {
+   "cardId": "9S",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "2S",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "8C"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "5S",
+    "5H"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "8S"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "7S"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "4D"
+   ],
+   "type": "play"
+  },
+  {
+   "type": "flip_jester"
+  },
+  {
+   "cardId": "10H",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "AS",
+    "5C"
+   ],
+   "type": "play"
+  },
+  {
+   "cardId": "3H",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "2D",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "7H"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "6S"
+   ],
+   "type": "play"
+  },
+  {
+   "type": "flip_jester"
+  },
+  {
+   "cardId": "10S",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "5D",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "10C"
+   ],
+   "type": "play"
+  },
+  {
+   "cardId": "9C",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "4S",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "2C",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "9D"
+   ],
+   "type": "play"
+  },
+  {
+   "cardIds": [
+    "9H"
+   ],
+   "type": "play"
+  },
+  {
+   "cardId": "8D",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "7D",
+   "type": "pay_damage"
+  },
+  {
+   "cardIds": [
+    "8H"
+   ],
+   "type": "play"
+  },
+  {
+   "cardId": "6C",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "4C",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "3C",
+   "type": "pay_damage"
+  },
+  {
+   "cardId": "3D",
+   "type": "pay_damage"
+  }
+ ],
+ "reason": "cannot_act",
+ "seed": "LOSE-SCRIPT-AA"
+}

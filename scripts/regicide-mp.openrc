@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+# Regicide MP — installed and managed by scripts/install-service.sh.
+# Do not edit /etc/init.d/regicide-mp by hand: edit this template and reinstall.
+name="regicide-mp"
+description="Regicide multiplayer server (solo + co-op) on :8321"
+
+directory="@ROOT@"
+command="@ROOT@/bin/regicide"
+command_args="-addr :8321 -data ./data"
+command_user="@USER@:@USER@"
+
+# Keep the table up if it ever dies; the game is stateful on disk, so a restart is
+# a reconnect, not data loss.
+supervisor="supervise-daemon"
+respawn_delay=5
+respawn_max=0
+output_log="@ROOT@/.run/regicide-boot.log"
+error_log="@ROOT@/.run/regicide-boot.log"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	checkpath --directory --owner @USER@:@USER@ --mode 0755 "@ROOT@/.run"
+	if [ ! -x "$command" ]; then
+		eerror "$command is missing or not executable; build it with ./scripts/restart.sh first"
+		return 1
+	fi
+}

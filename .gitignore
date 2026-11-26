@@ -1,0 +1,14 @@
+# source art packs (large, kept outside git)
+artifacts
+# build output
+bin/
+*.log
+# scratch
+.tmp/
+build/
+/data/
+.run/
+
+# Python bytecode from the asset tools
+__pycache__/
+*.pyc

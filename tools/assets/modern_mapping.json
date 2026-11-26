@@ -1,0 +1,14 @@
+{
+ "version": 1,
+ "note": "Cell index (page-major, row-major, 9 cells per A4 page, 6 pages) -> Regicide card id. Read from the printed pip: the rank is inside the suit glyph. Verified on build/modern/pips-*.png. The template is not sorted, which is fine.",
+ "cards": {
+  "0": "2C", "1": "J1", "2": "J2", "3": "AC", "4": "3C", "5": "4C", "6": "5C", "7": "6C",
+  "8": "7C", "9": "JC", "10": "8C", "11": "9C", "12": "10C", "13": "QC", "14": "KC",
+  "15": "AH", "16": "2H", "17": "3H", "18": "7H", "19": "4H", "20": "5H", "21": "6H",
+  "22": "8H", "23": "9H", "24": "10H", "25": "JH", "26": "QH", "27": "3S", "28": "KH",
+  "29": "AS", "30": "2S", "31": "4S", "32": "5S", "33": "6S", "34": "7S", "35": "8S",
+  "36": "QS", "37": "9S", "38": "10S", "39": "JS", "40": "KS", "41": "AD", "42": "2D",
+  "43": "3D", "44": "4D", "45": "8D", "46": "5D", "47": "6D", "48": "7D", "49": "9D",
+  "50": "10D", "51": "JD", "52": "QD", "53": "KD"
+ }
+}

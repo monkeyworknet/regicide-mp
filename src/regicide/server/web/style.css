@@ -1,0 +1,2570 @@
+/* Regicide UI — dark felt shell, white minimal cards.
+   Tokens and layout follow docs/PLAN.md Appendix A. */
+
+:root {
+  accent-color: var(--gold); /* radios, checkboxes, range fill */
+  --felt: #12312a;
+  --felt-deep: #0d241f;
+  --panel: #1b4038;
+  --panel-2: #245046;
+  --ink: #f2f0e6;
+  --ink-dim: #b9cfc5; /* lightened for living-room legibility on a 390 px screen */
+  --gold: #d4a017;
+  --danger: #c0392b;
+  --heal: #3fa66b;
+  --card-bg: #fbfaf6;
+  --card-ink: #141414;
+  --red-suit: #b3312a;
+  --black-suit: #1b1b1b;
+  /* seat colours: one order everywhere — rail, dots, log marks (D-46). The fourth
+     seat is drawn light so a black seat still reads on a black-green table. */
+  --seat-red: #c0392b;
+  --seat-blue: #3f7fbf;
+  --seat-green: #3fa66b;
+  --seat-black: #8a8a8a;
+  --gap: clamp(6px, 1.2vw, 14px);
+  --radius: 10px;
+  --tap: 44px;
+  --card-w: clamp(58px, 15vw, 96px);
+  --speed: 180ms;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  background:
+    radial-gradient(120% 80% at 50% -10%, #1f5044 0%, transparent 60%),
+    radial-gradient(90% 60% at 50% 110%, #0b1f1a 0%, transparent 60%),
+    var(--felt);
+  font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+body { padding-bottom: env(safe-area-inset-bottom); overflow-x: hidden; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding: 12px clamp(12px, 3vw, 28px);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.18);
+  background: rgba(13, 36, 31, 0.75);
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.brand-mark { color: var(--gold); font-size: 20px; }
+.brand-text small { display: block; font-size: 10px; letter-spacing: 0.3em; color: var(--ink-dim); font-weight: 500; }
+.brand-version { letter-spacing: 0.06em; color: var(--ink-dim); opacity: 0.75; }
+.topbar-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+.ghost {
+  min-height: var(--tap);
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 240, 230, 0.22);
+  background: transparent;
+  color: var(--ink-dim);
+  font-size: 13px;
+  transition: color var(--speed), border-color var(--speed), background var(--speed);
+}
+.ghost:hover, .ghost:focus-visible { color: var(--ink); border-color: var(--gold); }
+.ghost[aria-pressed='true'] { color: var(--felt); background: var(--gold); border-color: var(--gold); }
+
+.primary {
+  min-height: var(--tap);
+  min-width: 120px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: linear-gradient(180deg, #e0b33a, var(--gold));
+  color: #221a05;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+/* A disabled CTA used to be 35 % opacity gold, which reads as a broken button.
+   Now it is visually inert: dashed outline, no fill, muted text. */
+.primary:disabled {
+  opacity: 1;
+  background: rgba(242, 240, 230, 0.06);
+  border: 1px dashed rgba(242, 240, 230, 0.28);
+  color: var(--ink-dim);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.primary:not(:disabled):hover { filter: brightness(1.06); }
+/* A gold ring on a gold button is invisible: the CTA gets an inner light ring. */
+.primary:focus-visible { outline: 3px solid var(--card-bg); outline-offset: -5px; }
+/* A disabled call to action is not a control: a focus ring on it told a waiting seat
+   "press this" and nothing happened (note 5). */
+.primary:disabled:focus-visible { outline: none; }
+
+main { max-width: 1280px; margin: 0 auto; padding: clamp(12px, 3vw, 28px); }
+
+.screen[hidden] { display: none; }
+
+/* ---------- setup ---------- */
+/* The headline and lede rotate, so they are given the worst-case height of the
+   pools: without it the form jumps up and down between visits. */
+/* The menu is one column: a centred card-set choice and the ways in beneath it. */
+#setup { max-width: 620px; margin-inline: auto; }
+#setup h1 { font-size: clamp(22px, 4.6vw, 38px); margin: 8px 0 10px; max-width: 22ch; min-height: 2.2em; }
+.lede { color: var(--ink-dim); max-width: 60ch; margin: 0 0 22px; }
+#setup .lede { min-height: 4.4em; }
+.setup-form { display: grid; gap: 18px; max-width: 620px; }
+/* The card set is the choice that matters on this screen, so it gets real estate:
+   two tiles per row on a phone, four across on a wide window. */
+/* Five sets: a fixed 4-wide grid left the fifth tile stranded on the left. Flex
+   centres every row, including a short last one. */
+.tile-grid.setup-themes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.tile-grid.setup-themes .tile { flex: 1 1 120px; max-width: 150px; }
+@media (max-width: 559px) {
+  /* Five small tiles stay on one row: two per row pushed Start Solo below the fold.
+     The labels are the part that has to stay readable. */
+  .tile-grid.setup-themes { gap: 8px; }
+  .tile-grid.setup-themes .tile { flex: 0 0 calc(20% - 6.4px); max-width: none; padding: 5px 4px 7px; }
+  .tile-grid.setup-themes .tile-label { font-size: 11px; }
+  /* The two fields sit in thirds of a 390 px column; the placeholders must still read.
+     The `#setup` prefix outranks the base field rules that come later in the file. */
+  #setup #seed-input, #setup .entry-row-sub .entry-code-input { padding: 8px 6px; font-size: 12px; }
+  #setup #seed-input { letter-spacing: 0.01em; }
+  #setup .entry-row-sub .entry-code-input { letter-spacing: 0.05em; }
+}
+.setup-themes .tile { padding: 8px 8px 10px; }
+.setup-themes .tile-label { font-size: 13px; color: var(--ink); }
+.theme-note {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-dim);
+}
+.theme-note[hidden] { display: none; }
+.linkish {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--gold);
+  text-decoration: underline;
+  cursor: pointer;
+  min-height: 0;
+}
+.field { display: grid; gap: 8px; border: 0; padding: 0; margin: 0; }
+.field > span, .field legend { font-size: 13px; color: var(--ink-dim); }
+.field em { font-style: normal; color: rgba(169, 194, 184, 0.7); }
+input[type='text'] {
+  min-height: var(--tap);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(242, 240, 230, 0.25);
+  background: rgba(9, 26, 23, 0.7);
+  color: var(--ink);
+  font: inherit;
+}
+input[type='text']:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+/* A seed is a code, so it is typed in caps and mono. A player's name is prose:
+   it must not shout, and the leaderboard prints it as typed. */
+#seed-input {
+  font: 600 15px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+.radio { display: inline-flex; align-items: center; gap: 8px; min-height: var(--tap); margin-right: 16px; }
+/* One row of ways in (Start Solo / Host MP / Join MP), then the two fields they use.
+   Both rows share the same three columns, so the seed field is exactly under Start Solo
+   and the room code is under Join MP. */
+.entry-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: center; }
+.entry-row-sub { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Three buttons at a 120 px minimum cannot share one row on a phone: Start Solo
+   overlapped Host MP (5 px at 360, 18 px at 320, and again on wider phones once the
+   page zoom changed the used widths). A phone gets two rows: Start Solo across the
+   top, Host and Join side by side, with the seed centred under Host MP and the room
+   code under Join MP. */
+@media (max-width: 600px) {
+  .entry-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .entry-row > #btn-start { grid-column: 1 / -1; }
+  .entry-row > .primary,
+  .entry-row > .ghost { min-width: 0; }
+  .entry-row-sub { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .entry-row-sub .entry-gap { display: none; }
+}
+.entry-row > .primary, .entry-row > .ghost { width: 100%; min-width: 0; padding-inline: 10px; }
+.entry-seed, .entry-code-input { width: 100%; min-width: 0; padding: 8px 10px; text-align: center; }
+.entry-seed { font-family: inherit; letter-spacing: 0.04em; }
+.entry-code-input { font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.14em; text-transform: uppercase; }
+/* Typed codes get the monospace/uppercase treatment; the hint inside the empty box
+   should read like the seed's ("Seed (optional)"), not like a shouted label. */
+.entry-code-input::placeholder { font-family: inherit; letter-spacing: 0.04em; text-transform: none; }
+.entry-gap { min-width: 0; }
+.hint { color: var(--ink-dim); font-size: 13px; margin: 0; }
+
+/* ---------- board ---------- */
+.board {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: 1fr;
+  grid-template-areas: 'enemy' 'piles' 'hand' 'actions';
+  align-items: start;
+}
+
+.zone { border-radius: var(--radius); }
+.zone-enemy { grid-area: enemy; display: grid; gap: 10px; justify-items: center; }
+.zone-piles { grid-area: piles; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.zone-hand { grid-area: hand; }
+.actionbar { grid-area: actions; }
+
+.enemy-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.badge {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border: 1px solid rgba(242, 240, 230, 0.16);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.badge-warn { color: #f3c9c4; border-color: rgba(192, 57, 43, 0.6); background: rgba(192, 57, 43, 0.16); }
+.badge.is-broken { color: #b9e8c6; border-color: rgba(90, 190, 120, 0.55); background: rgba(40, 130, 80, 0.2); }
+
+.enemy-card { display: flex; justify-content: center; }
+.enemy-card .card-body { inset: 20% 12% 14%; gap: 4%; }
+.enemy-card .card-title { font-size: calc(var(--card-w-local) * 0.1); }
+.enemy-card .card-note { display: none; } /* the enemy card has no room for the footnote */
+.enemy-card .card-value { display: none; } /* its attack and health are on the counters */
+.enemy-card .card { --card-w: clamp(96px, 26vw, 168px); cursor: default; }
+.enemy-card.is-inspectable .card { cursor: zoom-in; }
+.enemy-card.is-inspectable .card:active { transform: scale(0.98); }
+
+/* The royal and its counters share a row. Stacked beside the card they cost
+   nothing vertically, which is the hand's gain: two rows of cards fit a phone. */
+.enemy-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+.enemy-stats {
+  display: grid;
+  /* Two boxes, not four: health and attack both count down from the enemy's
+     own numbers, so the panel reads from one point of view. */
+  grid-template-columns: 1fr;
+  align-content: center;
+  gap: 8px;
+  width: min(190px, 46%);
+  flex: 1 1 auto;
+  max-width: 230px;
+}
+.stat {
+  position: relative;
+  display: grid;
+  gap: 1px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: rgba(9, 26, 23, 0.55);
+  border: 1px solid rgba(242, 240, 230, 0.1);
+  text-align: center;
+}
+.stat-label { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+.stat-value { font-size: 27px; line-height: 1.05; }
+.numeral { font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: 0.01em; font-size: 1em; }
+.stat-value, .pile-count { font-variant-numeric: tabular-nums; font-weight: 700; }
+.stat-hp .stat-value { color: #ffd7d2; }
+.stat-attack .stat-value { color: #ff9b90; }
+/* The total is context, the leading number is the fact: keep it quiet. */
+.stat-total { font-size: 0.46em; font-weight: 600; color: var(--ink-dim); letter-spacing: 0.02em; }
+.stat-note { min-height: 1.1em; font-size: 11px; color: #9fd3ff; letter-spacing: 0.02em; }
+.stat-bar { display: block; height: 4px; border-radius: 999px; background: rgba(242, 240, 230, 0.14); overflow: hidden; }
+.stat-bar > span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--heal), #7fd0a4); transition: width var(--speed); }
+/* The bar drains: it tracks health remaining, so "16/20" and a 20%-full green bar
+   never disagree (it used to paint damage progress in a healing colour). */
+.step-hint { min-height: 1.4em; margin: 0; color: var(--ink); font-size: 14.5px; text-align: center; }
+.badge-phase { background: rgba(212, 160, 23, 0.16); border-color: rgba(212, 160, 23, 0.5); color: var(--gold); }
+.badge-pay { background: rgba(192, 57, 43, 0.18); border-color: rgba(192, 57, 43, 0.55); color: #ffb3a7; }
+/* The four suit powers, always in view: a friend should not have to open Rules. */
+.suit-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 6px;
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.suit-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(242, 240, 230, 0.06);
+  border: 1px solid rgba(242, 240, 230, 0.1);
+}
+.suit-legend .suit-icon { width: 1em; height: 1em; }
+.suit-legend .suit-hearts, .suit-legend .suit-diamonds { color: #ef8f84; }
+.suit-legend .suit-spades, .suit-legend .suit-clubs { color: var(--ink); }
+.suit-legend b { color: var(--ink); font-weight: 700; margin-right: 2px; }
+
+.pile {
+  min-width: 76px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: rgba(9, 26, 23, 0.5);
+  border: 1px dashed rgba(242, 240, 230, 0.16);
+  text-align: center;
+}
+/* "played" holds the cards in the attack area: no counter (the cards are the count)
+   and a box only as wide as the cards in it. */
+.pile-attack { flex: 0 1 auto; max-width: 220px; padding: 6px 10px; align-self: center; }
+/* The box only exists while cards are on it. The ID beats the phone layout's
+   `display: flex`, which would otherwise ignore [hidden]. */
+#pile-attack[hidden] { display: none; }
+/* The co-op grid sets display on #pile-attack, which outranks the plain [hidden] rule
+   above, so an empty played pile still drew its label and the "· all" hint. */
+body.is-coop #pile-attack[hidden] { display: none; }
+/* Same trap, three more piles: a co-op display rule outranks the bare [hidden] one. */
+body.is-coop #pile-jesters[hidden],
+body.is-coop #pile-tavern[hidden],
+body.is-coop #pile-discard[hidden] { display: none; }
+.pile-label { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
+.pile-count { font-size: 20px; }
+.attack-cards { display: flex; gap: 2px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
+.attack-cards .mini { width: 18px; height: 25px; border-radius: 3px; background: var(--card-bg); color: var(--card-ink); font-size: 9px; display: grid; place-items: center; font-weight: 700; }
+
+/* ---------- hand ---------- */
+.hand {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: calc(var(--card-w) * 1.45);
+  padding-top: 12px;
+}
+.hand .card { margin-left: 0; }
+
+/* ---------- cards ---------- */
+.card {
+  --card-w-local: var(--card-w);
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 0; /* flex items default to min-content, which would ignore --card-w */
+  width: var(--card-w-local);
+  aspect-ratio: 2.5 / 3.5;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--card-w-local) * 0.09);
+  background: var(--card-bg);
+  color: var(--card-ink);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  transition: transform var(--speed) ease, box-shadow var(--speed) ease;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+.card:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.card.is-selected { transform: translateY(-14%); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45), 0 0 0 2px var(--gold); }
+/* A card whose suit power the royal blocks. Damage still counts, so this is a corner
+   mark, not a disabled state. */
+.card .power-blocked {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  line-height: 1;
+  color: #1a1206;
+  background: var(--gold);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+.card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* The authored rule text sits in the template's blank middle. */
+.card-body {
+  position: absolute;
+  inset: 21% 10% 14%;
+  display: grid;
+  place-content: center;
+  gap: 3%;
+  text-align: center;
+  overflow: hidden;
+  color: var(--card-ink);
+  container-type: inline-size;
+  container-name: face;
+}
+.card-title { margin: 0; font-size: calc(var(--card-w-local) * 0.095); font-weight: 700; letter-spacing: 0.01em; overflow-wrap: anywhere; line-height: 1.15; }
+.card-value { margin: 0; font-size: calc(var(--card-w-local) * 0.075); color: #3d3d3d; line-height: 1.15; }
+.card-power {
+  margin: 0;
+  font-size: calc(var(--card-w-local) * 0.066);
+  line-height: 1.18;
+  color: #1f1f1f;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-note { margin: 0; font-size: calc(var(--card-w-local) * 0.06); line-height: 1.15; color: #6a6a6a; }
+/* Modern prints our text in its blank middle. The value line ("9 to attack · 9 when
+   discarded") is arithmetic the player already does from the rank, and the note is
+   a footnote: what is left is the rank and suit, and what the card does. */
+/* A two-character ref printed on the phone face of a blank-faced set. */
+.card-ref-compact { display: none; }
+.card-power-phone { display: none; }
+
+/* Cards without art still read clearly (index + text). */
+.card.missing-art { background: var(--card-bg); }
+.card-index {
+  position: absolute;
+  z-index: 2;
+  top: 5%;
+  left: 7%;
+  display: none;
+  font-size: calc(var(--card-w-local) * 0.28);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.card-index .card-suit { display: inline-flex; }
+/* Every deck prints its own index, so the only index we ever draw is the one that
+   stands in for art that failed to load. */
+.card.missing-art .card-index { display: block; }
+/* Drawn suit glyphs: they follow the text colour and size, and never depend on a
+   font shipping ♠♥♦♣. */
+.suit-icon { width: 0.92em; height: 0.92em; display: inline-block; vertical-align: -0.08em; }
+.suit-icon.suit-hearts, .suit-icon.suit-diamonds { color: var(--red-suit); }
+.card-ref { display: inline-flex; align-items: baseline; gap: 0.06em; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+.card-ref .suit-icon { width: 0.85em; height: 0.85em; }
+.card-index .suit-icon { color: var(--black-suit); }
+.card[data-suit='hearts'] .card-index .suit-icon,
+.card[data-suit='diamonds'] .card-index .suit-icon { color: var(--red-suit); }
+.card[data-suit='hearts'] .card-index,
+.card[data-suit='diamonds'] .card-index { color: var(--red-suit); }
+
+.card-counters { position: absolute; left: 6%; bottom: 5%; display: flex; gap: 3px; }
+
+@container face (max-width: 124px) {
+  .card-note { display: none; }
+}
+@container face (max-width: 96px) {
+  .card-power { -webkit-line-clamp: 3; }
+}
+@container face (max-width: 76px) {
+  .card-power { display: none; }
+}
+@container face (max-width: 62px) {
+  .card-value { display: none; }
+  .card-title { font-size: 9px; }
+}
+
+/* hand fanning: JS sets --i and --n */
+.hand .card {
+  margin-left: calc(var(--card-w) * -0.28);
+  transform: rotate(var(--rot, 0deg)) translateY(var(--lift, 0px));
+}
+.hand .card:first-child { margin-left: 0; }
+.hand .card.is-selected {
+  --lift: -14px;
+  outline: 3px solid var(--gold);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 6px rgba(212, 160, 23, 0.18), 0 10px 22px rgba(0, 0, 0, 0.45);
+}
+.hand .card:hover { --lift: -8px; }
+
+/* ---------- action bar ---------- */
+.actionbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: rgba(9, 26, 23, 0.5);
+  border: 1px solid rgba(242, 240, 230, 0.1);
+}
+/* A watcher's action bar is hidden with the attribute, and display:flex above would
+   otherwise keep it on screen as a greyed "Waiting for X" strip (campaign B9). */
+#actionbar[hidden] { display: none; }
+
+/* ---------- log strip ---------- */
+.log-strip {
+  position: fixed;
+  left: 50%;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  padding: 0 10px;
+  pointer-events: none;
+  z-index: 30;
+}
+.log-strip span {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(13, 36, 31, 0.9);
+  border: 1px solid rgba(242, 240, 230, 0.15);
+  color: var(--ink-dim);
+  animation: floatUp 2.6s ease forwards;
+}
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(8px); }
+  15% { opacity: 1; transform: translateY(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+/* ---------- hover helper ---------- */
+#card-tip {
+  position: fixed;
+  z-index: 60;
+  max-width: min(280px, calc(100vw - 24px));
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(9, 26, 23, 0.97);
+  border: 1px solid rgba(212, 160, 23, 0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  color: var(--ink);
+  font-size: 12.5px;
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+#card-tip.is-visible { opacity: 1; }
+#card-tip .tip-title { display: block; font-weight: 700; margin-bottom: 2px; }
+#card-tip .tip-value { display: block; color: var(--ink-dim); margin-bottom: 4px; }
+#card-tip .tip-power { display: block; }
+#card-tip .tip-note { display: block; color: var(--ink-dim); margin-top: 4px; font-size: 11.5px; }
+
+/* ---------- overlays ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(5, 14, 12, 0.72);
+  backdrop-filter: blur(4px);
+}
+.sheet {
+  width: min(560px, 100%);
+  max-height: 86dvh;
+  overflow: auto;
+  padding: clamp(16px, 4vw, 28px);
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--panel), var(--felt-deep));
+  border: 1px solid rgba(212, 160, 23, 0.28);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+.sheet h2 { margin: 0 0 12px; font-size: 20px; }
+.sheet h3 { margin: 18px 0 6px; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+.sheet p, .sheet li { color: var(--ink-dim); }
+.sheet-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+/* The long sheets (Settings, Rules) scroll internally, and their primary controls
+   sat at the bottom of a 900-2600px scroll: Save/Cancel at y=1692, "Got it" at
+   y=2251 (measured). A sticky footer keeps the actions on screen while the sheet
+   scrolls. The co-op nav joined them in 0.9.9: at 44px rows with room code, watchers
+   and a crown handover, its only Close measured below the fold at 390.
+   Scoped to the three sheets that need it; the short sheets are untouched. */
+#settings-sheet .sheet, #rules-sheet .sheet, #nav-sheet .sheet { padding-bottom: 0; }
+#settings-sheet .sheet-actions, #rules-sheet .sheet-actions, #nav-sheet .sheet-actions {
+  position: sticky;
+  bottom: 0;
+  margin-top: 14px;
+  padding-top: 12px;
+  padding-bottom: clamp(16px, 4vw, 28px);
+  background: var(--felt-deep);
+  border-top: 1px solid rgba(242, 240, 230, 0.07);
+}
+/* End-sheet boilerplate (the seed note, the leaderboard-exclusion note) is quieter
+   than the result it sits under: the loss sheet's "Short by five." read as one of
+   two identical footnotes (panel note). Quieter, but still AA on the sheet surface:
+   the first attempt measured 3.88:1; this one measures 5.25:1. */
+.hint.hint-note { color: #93a0ac; font-size: 12px; }
+/* The end sheet's log & replay disclosure: a summary that reads as the ghost pill
+   beside it, with the native marker replaced by a chevron that follows the state. */
+.log-replay {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+/* A closed disclosure must actually hide. This Chromium keeps the closed details'
+   content laid out and hit-testable: measured on the end sheet, an invisible
+   History button overlapped the visible Close button, and an invisible Copy log
+   floated over the backdrop below the sheet (0.9.9 panel review, P1). One
+   engine-independent line removes the stale boxes and the phantom scroll they
+   inflated; the open state is untouched. */
+.log-replay:not([open]) .log-replay-actions { display: none; }
+.log-replay > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+}
+.log-replay > summary::-webkit-details-marker { display: none; }
+.log-replay > summary::after { content: '\25BE'; font-size: 11px; }
+.log-replay[open] > summary::after { content: '\25B4'; }
+.log-replay-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-top: 8px; }
+.sheet .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--tap); }
+.sheet input[type='range'] { width: 140px; }
+.sheet input[type='text'] { width: 100%; }
+.sheet .name-row { display: flex; gap: 8px; margin-top: 10px; }
+.sheet .name-row input { flex: 1; }
+
+/* Leaderboard: a real table with a fixed layout. The class must not be `board`:
+   `.board` is the grid that lays out the game, and applying it to a table turned
+   the header and body into grid items, so the columns drew side by side. */
+.lb-tier {
+  margin: 20px 0 2px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.lb-tier:first-of-type { margin-top: 8px; }
+table.lb-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+table.lb-table th,
+table.lb-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid rgba(242, 240, 230, 0.08);
+  vertical-align: baseline;
+}
+table.lb-table thead th {
+  color: var(--ink-dim);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+}
+table.lb-table .rank { width: 2.8em; text-align: right; padding-right: 10px; color: var(--ink-dim); }
+/* Wide enough for the longest header ("JESTERS") so the columns never touch. */
+table.lb-table .num { width: 5.6em; text-align: right; white-space: nowrap; }
+table.lb-table .name { overflow: hidden; }
+table.lb-table .name span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+table.lb-table tbody tr:last-child td { border-bottom: none; }
+table.lb-table tbody tr:nth-child(1) .rank { color: var(--ink); }
+.tier-gold { color: var(--gold); }
+.tier-silver { color: #cfd6d3; }
+.tier-bronze { color: #c98a5a; }
+.empty { color: var(--ink-dim); font-size: 14px; }
+.credits-list { font-size: 13px; line-height: 1.6; }
+.rules-body { font-size: 14px; line-height: 1.55; }
+.rules-body h3 { margin: 16px 0 6px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
+.rules-body p { margin: 8px 0; color: var(--ink); }
+.rules-body ul, .rules-body ol { margin: 6px 0 6px 18px; padding: 0; }
+.rules-body li { margin: 4px 0; color: var(--ink); }
+.rules-body .hint { color: var(--ink-dim); font-size: 12px; }
+.credits-list a { color: var(--gold); }
+
+.result-tier { font-size: 28px; margin: 0 0 6px; }
+/* The multiplayer result board: four things the table can compare. */
+.awards { list-style: none; margin: 4px 0 14px; padding: 0; display: grid; gap: 2px; }
+.award { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 6px 0; border-bottom: 1px solid rgba(242, 240, 230, 0.09); font-size: 13px; }
+.award:last-child { border-bottom: 0; }
+.award-label { color: var(--ink-dim); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.award-value { color: var(--ink); text-align: right; }
+.result-seed { font: 600 15px/1.3 ui-monospace, monospace; letter-spacing: 0.16em; color: var(--gold); }
+.copy-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 559px) {
+  /* The peek is the confirmation surface, so it must clear the pinned bar. */
+  .peek { margin-bottom: 6px; }
+  /* Scrolling the peek into view must leave the action bar's height free, or the
+     bottom of the strip lands under a sticky bar. */
+  .peek { scroll-margin-bottom: 92px; }
+  /* A translucent header over a scrolled card smeared the enemy into the belt.
+     On a phone the header is a solid band; the blur is a desktop nicety. */
+  .topbar { background: #0d241f; backdrop-filter: none; }
+  /* The board is taller than a phone screen once the peek strip is open, and the
+     Play button must never be the thing that scrolls away: keep the action bar
+     pinned to the bottom edge. */
+  .actionbar {
+    position: sticky;
+    bottom: 0;
+    z-index: 25;
+    gap: 8px;
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    background: rgba(9, 26, 23, 0.97);
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.35);
+  }
+  /* One row only: the bar is pinned to the bottom, so a second row eats the hand.
+     Deselect is dropped here because tapping the card or the peek's own button
+     already clears the selection. */
+  .actionbar button { font-size: 15px; padding: 12px 14px; }
+  #btn-deselect { display: none; }
+  .accurl { margin-bottom: 0; }
+
+  /* The floating event chips used to sit over the action bar and the peek strip:
+     on a phone there is no free strip of screen. Put them in the flow instead, as
+     a single row under the buttons, and reserve its height so nothing jumps. */
+  /* The strip owns a grid row directly above the action bar, so it can never sit
+     behind it and never needs a magic offset. */
+  #log-strip {
+    position: static;
+    left: auto;
+    transform: none;
+    bottom: auto;
+    margin: 0 auto;
+    min-height: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #log-strip span { animation-duration: 3.2s; }
+
+  /* The leaderboard loses its duration column on a phone: four columns of numbers
+     in 300 px is unreadable, and turns is the ranking key. */
+  table.lb-table { font-size: 13px; }
+  table.lb-table th, table.lb-table td { padding: 7px 4px; }
+  table.lb-table .played { display: none; }
+  /* Narrower cells need a smaller header or "TURNS"/"JESTERS" overlap. */
+  table.lb-table thead th { font-size: 9.5px; letter-spacing: 0.06em; }
+  table.lb-table .num { width: 4.8em; }
+  table.lb-table .rank { width: 2.2em; padding-right: 6px; }
+  /* A 46 px fan of faces could not be read. Four across, two rows, and — for the
+     one set whose middle is blank — the power printed large. No other set gets an
+     overlay: Simple, 8bit and Pokémon already print a readable index. */
+  .hand {
+    /* Flex, not a 4-column grid: a row of three cards in a four-column grid sat
+       against the left edge. Wrapping plus centring keeps both rows centred. */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    min-height: 0;
+  }
+  /* The royal and its counters share a row now, so the hand gained ~150 px of
+     height: spend it on the cards, not on empty felt. */
+  .hand .card { width: 70px; --card-w-local: 70px; margin-left: 0; }
+  .hand .card .card-body { display: none; }
+  .hand .card.is-selected { --lift: 0px; outline: 3px solid var(--gold); }
+  /* Four piles do not fit beside each other on a phone: three counters in a row,
+     the attack area on its own line below. */
+  .zone-piles { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .pile { min-width: 0; }
+  #pile-tavern { grid-area: 1 / 1; }
+  #pile-discard { grid-area: 1 / 2; }
+  #pile-jesters { grid-area: 1 / 3; }
+  #pile-attack { grid-area: 2 / 1 / 3 / 4; max-width: none; }
+}
+
+@media (min-width: 560px) {
+  :root { --card-w: clamp(64px, 11vw, 104px); }
+}
+
+@media (min-width: 1024px) {
+  :root { --card-w: clamp(84px, 7.2vw, 104px); }
+  /* Larger pile art: a Jester face at 46 px showed the frame and nothing else. */
+  .jester-tray { gap: 8px; }
+  .pile-stack, .pile-jesters { padding: 10px 14px 8px; gap: 6px; }
+  /* Three piles share the row; the played area drops underneath it, so a card
+     landing there never squeezes the boxes or shifts the jesters. */
+  .zone-piles {
+    display: grid;
+    /* Each box is as wide as its own art: stretching three boxes across the column
+       left 300 px of empty felt inside every one of them. */
+    grid-template-columns: repeat(3, max-content);
+    justify-content: center;
+    gap: 12px;
+    align-content: start;
+  }
+  /* Explicit cells: with a spanning played row, auto-placement pushed the Jesters
+     onto a third row of their own. */
+  #pile-tavern { grid-area: 1 / 1; }
+  #pile-discard { grid-area: 1 / 2; }
+  #pile-jesters { grid-area: 1 / 3; }
+  #pile-attack {
+    grid-area: 2 / 1 / 3 / -1;
+    max-width: none;
+    justify-self: stretch;
+    align-self: start;
+    padding: 8px 12px;
+  }
+  .board {
+    grid-template-columns: minmax(280px, 0.85fr) minmax(420px, 1.15fr);
+    grid-template-areas:
+      'enemy piles'
+      'hand hand'
+      'actions actions';
+    align-items: start;
+  }
+  .zone-enemy { justify-items: center; padding-top: 4px; }
+  .zone-piles { justify-content: center; }
+  .hand { justify-content: center; min-height: calc(var(--card-w) * 1.5); flex-wrap: wrap; gap: 8px; }
+  .hand .card { margin-left: 0; }
+  /* The bar belongs to the hand above it, not to the whole page: it hugs its buttons
+     and sits under the centred cards. The phone keeps its pinned full-width bar. */
+  .actionbar { justify-content: center; justify-self: center; width: fit-content; min-width: min(100%, 420px); max-width: 100%; }
+}
+
+/* 1080p and up: the board was capped at 1280 px, so a full-screen window showed a
+   board in the middle with empty felt on both sides and below. */
+@media (min-width: 1400px) {
+  main { max-width: 1560px; }
+  /* A full-screen window was showing a small board pinned under the header with
+     empty felt below it: give the board the viewport and centre what is in it. */
+  #board { min-height: calc(100vh - 132px); align-content: center; }
+  :root { --card-w: clamp(104px, 7vw, 132px); }
+  .enemy-card .card { --card-w: clamp(112px, 9vw, 168px); }
+  .stat-value { font-size: 34px; }
+  .stat { padding: 10px 14px; }
+}
+
+@media (max-height: 470px) and (orientation: landscape) {
+  :root {
+  accent-color: var(--gold); /* radios, checkboxes, range fill */ --card-w: clamp(48px, 11vw, 76px); }
+  .board { grid-template-columns: 1fr 1fr; grid-template-areas: 'enemy hand' 'piles actions'; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  .hand .card { transform: none !important; }
+}
+
+/* Reduced animation modes set by settings */
+body.anim-off .log-strip span { animation: none; opacity: 1; }
+body.anim-off .card { transition: none; }
+/* Reduced motion removes the lift, not the selection: the ring survives. */
+@media (prefers-reduced-motion: reduce) {
+  .hand .card.is-selected { --lift: 0px; outline: 3px solid var(--gold); }
+}
+body.anim-fast { --speed: 90ms; }
+
+/* ---------- piles: card art + chip counters ---------- */
+.zone-piles { align-items: stretch; }
+.pile-stack, .pile-jesters { position: relative; display: grid; justify-items: center; gap: 4px; padding: 8px 12px 6px; }
+.pile-art { position: relative; width: var(--pile-art-w); height: var(--pile-art-h); }
+.pile-art .card-back { --card-w-local: var(--pile-back-w); width: var(--pile-back-w); }
+/* A stack reads as a stack: two offset backs behind the front one. */
+.pile-art .card-back:nth-child(2) { position: absolute; top: 3px; left: 5px; transform: rotate(2deg); }
+.pile-art .card-back:nth-child(1) { position: relative; transform: rotate(-2deg); }
+.pile-art .card-back { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45); }
+.pile-fan { display: flex; justify-content: center; align-items: center; }
+.pile-fan .card { --card-w-local: var(--pile-fan-w); width: var(--pile-fan-w); margin-left: calc(var(--pile-fan-w) / -2); transform: rotate(var(--rot, 0deg)); }
+.pile-fan .card:first-child { margin-left: 0; }
+.pile-fan .card:nth-child(1) { --rot: -7deg; }
+.pile-fan .card:nth-child(2) { --rot: 0deg; }
+.pile-fan .card:nth-child(3) { --rot: 7deg; }
+.pile-empty { width: var(--pile-fan-w); height: var(--pile-empty-h); border-radius: 6px; border: 1px dashed rgba(242, 240, 230, 0.18); }
+
+/* The count is written on a poker chip rather than beside it. */
+.chip {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  flex: 0 0 auto;
+}
+.chip-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+  letter-spacing: -0.02em;
+}
+.chip-white .chip-value { color: #16211e; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+.chip-black { background-image: url('/img/furniture/chip_black.webp'); }
+.chip-blue { background-image: url('/img/furniture/chip_blue.webp'); }
+.chip-red { background-image: url('/img/furniture/chip_red.webp'); }
+.chip-purple { background-image: url('/img/furniture/chip_purple.webp'); }
+.chip-green { background-image: url('/img/furniture/chip_green.webp'); }
+.chip-orange { background-image: url('/img/furniture/chip_orange.webp'); }
+.chip-white { background-image: url('/img/furniture/chip_white.webp'); }
+
+/* Jester tray: the two Jester cards, face up until they are spent. */
+.jester-tray { display: flex; gap: 6px; align-items: center; }
+.jester-tray .card { --card-w-local: var(--jester-w); width: var(--jester-w); padding: 0; }
+.jester-tray .card.is-spent { filter: grayscale(0.55) brightness(0.6); }
+.jester-tray .card.is-available { box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.65), 0 4px 12px rgba(0, 0, 0, 0.4); }
+.jester-tray .card.is-available:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- move history drawer ---------- */
+.drawer {
+  position: fixed;
+  z-index: 55;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: linear-gradient(180deg, var(--panel), var(--felt-deep));
+  border-left: 1px solid rgba(212, 160, 23, 0.3);
+  box-shadow: -18px 0 48px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%);
+  transition: transform 160ms ease;
+}
+.drawer[hidden] { display: none; }
+.drawer.is-open { transform: translateX(0); }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(242, 240, 230, 0.12); }
+.drawer-head .ghost.small { min-width: 44px; }
+.drawer-head h2 { margin: 0; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; }
+.drawer-actions { display: flex; gap: 8px; }
+.drawer-body { overflow: auto; padding: 10px 14px 24px; }
+.history-turn { margin: 12px 0 4px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+.history-turn:first-child { margin-top: 0; }
+.history-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.history-list li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: baseline; font-size: 13px; line-height: 1.35; color: var(--ink); padding: 3px 0; border-bottom: 1px solid rgba(242, 240, 230, 0.06); }
+.history-list .ev-mark { text-align: center; color: var(--ink-dim); }
+.history-list li.ev-play .ev-mark { color: #ffc46b; }
+.history-list li.ev-defeat .ev-mark, .history-list li.ev-tag { color: var(--gold); }
+.history-list li.ev-suffer .ev-mark { color: #ff9b90; }
+.history-list li.ev-hearts .ev-mark { color: var(--heal); }
+.history-list li.ev-shield .ev-mark { color: #9fd3ff; }
+.history-list .ev-impact { color: var(--ink-dim); }
+.history-cards { display: inline-flex; gap: 2px; vertical-align: middle; margin-right: 4px; }
+.history-cards .card { --card-w-local: 22px; width: 22px; cursor: default; box-shadow: none; }
+.history-empty { color: var(--ink-dim); font-size: 13px; }
+
+.card-img.is-pixelated { image-rendering: pixelated; }
+
+@media (max-width: 559px) {
+  /* Phones: the drawer takes the screen, the trays shrink, chips stay legible. */
+  .drawer { width: 100vw; }
+  /* The board has to fit 844 px with the hand fully visible above a pinned action
+     bar: every zone gives back a little. */
+  .app-header { padding: 8px 12px; }
+  .brand { font-size: 15px; }
+  .brand-text small { font-size: 9px; }
+  .zone-enemy { gap: 6px; }
+  .enemy-head { gap: 5px; }
+  .badge { font-size: 10px; padding: 4px 9px; }
+  .enemy-card .card { --card-w: clamp(86px, 22vw, 124px); }
+  .enemy-stats { gap: 6px; }
+  .stat { padding: 6px 8px; }
+  .stat-value { font-size: 23px; }
+  .step-hint { font-size: 13.5px; }
+  .suit-legend { font-size: 11.5px; gap: 3px 4px; }
+  .suit-legend > span { padding: 2px 6px; }
+  .pile-stack, .pile-jesters { padding: 6px 8px 4px; gap: 2px; }
+  .pile-label { font-size: 9.5px; }
+  /* "played" is a count, not a zone: one thin row instead of a 100 px box. */
+  #pile-attack {
+    grid-area: 2 / 1 / 3 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 10px;
+    min-height: 0;
+  }
+  #pile-attack .pile-label { margin: 0; }
+  .pile-fan { min-height: 0; }
+  section#board { gap: 6px; }
+  .chip { width: 28px; height: 28px; }
+  .chip-value { font-size: 12px; }
+}
+
+.badge-chaos { color: #f0c8ff; border-color: rgba(150, 80, 200, 0.6); background: rgba(120, 60, 170, 0.22); }
+.pill-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.drive-row { align-items: flex-start; }
+.drive-row > span:first-child { min-width: 96px; padding-top: 10px; }
+.radio-row { display: flex; flex-wrap: wrap; gap: 8px 4px; }
+
+/* Jester faces are shown as art: at tray size the rule text of a text-bearing
+   theme would be unreadable, so the tray hides it and relies on the hover helper. */
+/* The Jester is a real card: on a text-bearing set it prints the same authored
+   text as the rest of the deck (hidden on phones, where the zoom sheet is used). */
+.jester-tray .card .card-body { inset: 22% 9% 10%; gap: 2%; }
+.jester-tray .card .card-note { display: none; }
+.jester-tray .card .card-img { object-fit: cover; }
+
+/* Phone navigation: one button instead of six in the top bar. */
+.nav-toggle { display: none; font-size: 18px; line-height: 1; padding: 8px 12px; }
+.nav-list { display: grid; gap: 8px; }
+.nav-item { justify-content: center; min-height: calc(var(--tap) + 4px); font-size: 15px; }
+@media (max-width: 559px) {
+  .nav-toggle { display: inline-flex; }
+  #topbar-nav { display: none; }
+  .topbar { padding-bottom: 6px; }
+  /* On a phone the bar is just the crown and a small Menu, on the menu and in game:
+     the wordmark is menu chrome, and 31 px of bar is 31 px the board cannot use. */
+  .topbar { min-height: 0; padding: 2px 10px; }
+  .brand { gap: 0; }
+  .brand-text { display: none; }
+  .brand-mark { width: 20px; height: 20px; }
+  #btn-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 26px;
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 1;
+  }
+  .board { gap: 8px; }
+  .pile-attack { min-height: 0; padding: 6px 10px; }
+  .pile-attack .attack-cards { min-height: 0; }
+}
+
+@media (max-width: 559px) {
+  /* Settings rows stack on a phone; the pill groups wrap from the left and the
+     sheet never exceeds the viewport. */
+  .drive-row { flex-direction: column; align-items: stretch; gap: 6px; }
+  .drive-row > span:first-child { min-width: 0; padding-top: 0; }
+  .pill-group { justify-content: flex-start; }
+  .pill-group .ghost { font-size: 13px; padding: 7px 11px; }
+  .sheet { width: 100%; max-width: 100%; overflow-x: hidden; }
+}
+
+/* Discard fan cards are too small for the printed rule text: show the art only. */
+.pile-fan .card .card-body { display: none; }
+.pile-fan .card { cursor: default; }
+
+/* The dark card set prints on a dark face: the authored rule text needs light
+   ink, otherwise it disappears into the card. */
+body[data-theme='dark'] .card-body { color: #efe8d8; }
+body[data-theme='dark'] .card-title { color: #f6efdd; }
+body[data-theme='dark'] .card-value { color: #cfc6b4; }
+body[data-theme='dark'] .card-power { color: #e9e0cc; }
+body[data-theme='dark'] .card-note { color: #b6ac97; }
+
+/* ---------- settings sheet ---------- */
+#settings-sheet .sheet { width: min(620px, 100%); }
+#settings-title { margin-bottom: 4px; }
+.tile-grid { display: grid; gap: 8px; margin: 6px 0 4px; }
+.theme-grid { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+.back-grid { grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); }
+/* 21 Jester faces: five across on a desk, four on a phone, all card-shaped. */
+.joker-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+.joker-grid .tile-art img { object-fit: contain; background: #f3efe4; }
+.tile {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 6px 6px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(242, 240, 230, 0.14);
+  background: rgba(9, 26, 23, 0.5);
+  cursor: pointer;
+  transition: border-color var(--speed) ease, box-shadow var(--speed) ease, transform var(--speed) ease;
+}
+.tile:hover { border-color: rgba(212, 160, 23, 0.55); transform: translateY(-1px); }
+.tile:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.tile img { width: 100%; aspect-ratio: 2.5 / 3.5; object-fit: cover; border-radius: 6px; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
+.tile-label { font-size: 11px; letter-spacing: 0.04em; color: var(--ink-dim); text-align: center; line-height: 1.15; }
+.tile[aria-pressed='true'] { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.45); background: rgba(212, 160, 23, 0.1); }
+.tile[aria-pressed='true'] .tile-label { color: var(--ink); }
+
+.segmented { display: inline-flex; border-radius: 999px; overflow: hidden; border: 1px solid rgba(242, 240, 230, 0.16); }
+.segmented .seg { border: 0; border-radius: 0; background: transparent; color: var(--ink-dim); padding: 8px 16px; min-height: var(--tap); font: inherit; cursor: pointer; }
+.segmented .seg + .seg { border-left: 1px solid rgba(242, 240, 230, 0.12); }
+.segmented .seg[aria-pressed='true'] { background: var(--gold); color: #16211e; font-weight: 700; }
+.segmented .seg:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px solid rgba(242, 240, 230, 0.07); }
+.setting-row:last-of-type { border-bottom: 0; }
+.setting-name { display: grid; gap: 2px; font-size: 14px; color: var(--ink); }
+.setting-hint { font-size: 11.5px; line-height: 1.35; color: var(--ink-dim); }
+.setting-row input[type='range'] { width: 150px; flex: 0 0 auto; }
+
+.switch { display: inline-flex; align-items: center; gap: 8px; min-height: var(--tap); padding: 0; border: 0; background: none; cursor: pointer; }
+.switch-knob { position: relative; display: block; width: 44px; height: 24px; border-radius: 999px; background: rgba(242, 240, 230, 0.18); transition: background var(--speed) ease; flex: 0 0 auto; }
+.switch-knob::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #f2f0e6; transition: transform var(--speed) ease; }
+.switch[aria-checked='true'] .switch-knob { background: var(--gold); }
+.switch[aria-checked='true'] .switch-knob::after { transform: translateX(20px); }
+.switch-text { font-size: 12px; color: var(--ink-dim); min-width: 22px; text-align: left; }
+.switch:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 999px; }
+
+@media (max-width: 559px) {
+  .theme-grid { grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); }
+  .back-grid { grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); }
+  .joker-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
+  .setting-row input[type='range'] { width: 110px; }
+}
+
+/* Theme tiles: the art, plus a sample of the printed rule text for sets that
+   carry it (their middle is blank in the artwork itself). */
+.tile-art { position: relative; display: block; width: 100%; }
+.tile-art img { display: block; width: 100%; aspect-ratio: 2.5 / 3.5; object-fit: cover; border-radius: 6px; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
+.tile-sample {
+  position: absolute;
+  inset: 38% 14% auto;
+  font-size: 7px;
+  line-height: 1.2;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgba(31, 31, 31, 0.92);
+  pointer-events: none;
+}
+body[data-theme='dark'] .theme-tile[aria-pressed] .tile-sample,
+.tile[data-theme-id='dark'] .tile-sample { color: #f6efdd; }
+
+/* Brand mark, menu-only actions and the setup footer link. */
+.brand-mark { width: 26px; height: 26px; display: block; }
+.linklike { border: 0; background: none; padding: 0; color: var(--gold); font: inherit; text-decoration: underline; cursor: pointer; }
+.linklike:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.setup-links { margin-top: 10px; }
+
+/* ---------- card zoom sheet (tap a card / open a pile) ---------- */
+#zoom-sheet .sheet { width: min(680px, 100%); }
+.zoom-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin: 6px 0 2px; }
+.zoom-grid.single { grid-template-columns: 1fr; justify-items: center; }
+.zoom-card { display: grid; gap: 8px; justify-items: center; }
+.zoom-size { --card-w-local: clamp(148px, 40vw, 210px); width: clamp(148px, 40vw, 210px); cursor: default; }
+.zoom-caption { display: grid; gap: 2px; text-align: center; font-size: 12.5px; color: var(--ink-dim); max-width: 260px; }
+.zoom-caption strong { color: var(--ink); font-size: 14px; }
+.zoom-value { color: var(--ink-dim); }
+.zoom-power { color: var(--ink); }
+.zoom-note { font-size: 11.5px; }
+
+/* ---------- face + back preview (settings and main menu) ---------- */
+.preview { display: flex; gap: 12px; align-items: flex-start; justify-content: center; }
+.preview-host { text-align: center; }
+.preview-item { margin: 0; display: grid; gap: 6px; justify-items: center; }
+.preview-item img { width: 88px; aspect-ratio: 2.5 / 3.5; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+.preview-item figcaption { font-size: 11px; color: var(--ink-dim); }
+.preview-host { margin: 10px 0 4px; }
+.select {
+  background: rgba(9, 26, 23, 0.75);
+  color: var(--ink);
+  border: 1px solid rgba(242, 240, 230, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-height: var(--tap);
+  font: inherit;
+  max-width: 190px;
+}
+.select:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+/* The discard pile opens the cards large. */
+.pile.is-clickable { cursor: pointer; }
+.pile.is-clickable { border-style: solid; border-color: rgba(212, 160, 23, 0.35); }
+.pile.is-clickable .chip { box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.25); }
+.pile.is-clickable:hover { border-color: rgba(212, 160, 23, 0.6); background: rgba(9, 26, 23, 0.65); }
+.pile.is-clickable:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+@media (max-width: 559px) {
+  /* Phones: the tray is art only; tapping the Jester opens the readable sheet. */
+  .jester-tray .card .card-body { display: none; }
+  .preview-item img { width: 72px; }
+}
+
+/* ---------- peek strip: what is selected, readable, above the Play button ---------- */
+.peek {
+  grid-area: peek;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: rgba(9, 26, 23, 0.55);
+  border: 1px solid rgba(212, 160, 23, 0.35);
+}
+.peek[hidden] { display: none; }
+.peek .zoom-card { gap: 6px; }
+.peek .zoom-card .card { --card-w-local: 96px; width: 96px; }
+.peek .zoom-caption { font-size: 11.5px; max-width: 168px; }
+/* The peek is the only readable surface while choosing, so it keeps the power
+   sentence: two lines, 11.5 px, no note. */
+.peek .zoom-power {
+  font-size: 11.5px;
+  line-height: 1.25;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.peek .zoom-caption strong { font-size: 12px; }
+.peek .zoom-note,
+.peek .zoom-value { display: none; } /* the card prints its value; the strip says what it does */
+.peek .ghost, .peek .primary { font-size: 12px; padding: 6px 10px; }
+
+/* The peek row only exists on phones; declaring it elsewhere would add a gap. */
+@media (min-width: 560px) {
+  .peek { display: none; }
+}
+@media (max-width: 559px) {
+  .board { grid-template-areas: 'enemy' 'piles' 'hand' 'peek' 'log' 'actions'; }
+  #log-strip { grid-area: log; }
+}
+
+/* ---------- pile art sizing: one place, by breakpoint ----------
+   These used to be declared in four scattered media queries, and two later base
+   rules silently shadowed the desktop sizes: the piles rendered at their phone
+   size on a 1440p screen. Now the base rules read variables and only the
+   variables change here, so no rule can be overridden by accident. */
+:root {
+  --pile-art-w: 58px;
+  --pile-art-h: 82px;
+  --pile-back-w: 56px;
+  --pile-fan-w: 44px;
+  --pile-empty-h: 62px;
+  --jester-w: 46px;
+}
+@media (max-width: 559px) {
+  :root {
+    --pile-art-w: 44px;
+    --pile-art-h: 62px;
+    --pile-back-w: 42px;
+    --pile-fan-w: 34px;
+    --pile-empty-h: 48px;
+    --jester-w: 34px;
+  }
+}
+@media (min-width: 560px) {
+  :root { --jester-w: 54px; }
+}
+@media (min-width: 1024px) {
+  :root {
+    --pile-art-w: 88px;
+    --pile-art-h: 123px;
+    --pile-back-w: 86px;
+    --pile-fan-w: 66px;
+    --pile-empty-h: 92px;
+    --jester-w: 76px;
+  }
+}
+/* Big piles need vertical room as well as width: at 900 px tall the board is
+   already within ~35 px of the viewport, so the next step up is gated on height. */
+@media (min-width: 1400px) and (min-height: 1000px) {
+  :root {
+    --pile-art-w: 112px;
+    --pile-art-h: 157px;
+    --pile-back-w: 110px;
+    --pile-fan-w: 84px;
+    --pile-empty-h: 117px;
+    --jester-w: 100px;
+  }
+}
+@media (min-width: 1400px) and (min-height: 1300px) {
+  :root {
+    --pile-art-w: 128px;
+    --pile-art-h: 179px;
+    --pile-back-w: 126px;
+    --pile-fan-w: 96px;
+    --pile-empty-h: 134px;
+    --jester-w: 116px;
+  }
+}
+
+/* The seat rail is a co-op element. Solo hides it with [hidden], and the display
+   rule must not bring it back: for a release an unscoped rail column pushed the solo
+   board into a 1150px strip on every wide screen (playtest 3, note 2). */
+.seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  /* The rail is the first thing on the board in a room: who is at this table, and
+     whose turn it is. It takes its own row above the enemy. */
+  grid-area: seats;
+}
+#seats[hidden] { display: none; }
+
+.seat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 96px;
+  padding: 8px 10px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 13px;
+}
+
+/* Room for the crown above the name. */
+.seat.is-host {
+  padding-top: 16px;
+  border-color: rgba(212, 160, 23, 0.45);
+}
+
+.host-crown {
+  position: absolute;
+  top: 2px;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  opacity: 0.95;
+}
+
+.seat-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seat-name {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.seat-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted, #9db3ad);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.seat-count {
+  font-weight: 600;
+  color: var(--text, #eef5f2);
+}
+
+.seat-full {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: rgba(212, 160, 23, 0.18);
+  color: #e6c25a;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.seat-away {
+  color: #e08a6a;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.seat.is-active {
+  border-color: rgba(212, 160, 23, 0.85);
+  box-shadow: 0 0 0 1px rgba(212, 160, 23, 0.35);
+}
+
+.seat.is-you .seat-name::after {
+  content: " · you";
+  color: var(--muted, #9db3ad);
+  font-weight: 400;
+}
+
+.seat.is-away {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.seat-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.seat-red { background: #d2453f; }
+.seat-blue { background: #3f7fd2; }
+.seat-green { background: #3fa06a; }
+.seat-black { background: #2c3134; }
+
+.seat-view {
+  margin-top: 4px;
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted, #9db3ad);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------- the lobby */
+
+#lobby {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.lobby-title {
+  margin: 0 0 4px;
+  font-size: clamp(24px, 5vw, 34px);
+}
+
+.lobby-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.lobby-code-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lobby-label {
+  color: var(--muted, #9db3ad);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The code is the thing a person reads across a room: large, monospaced, tappable. */
+.room-code {
+  padding: 6px 14px;
+  border: 1px solid rgba(212, 160, 23, 0.5);
+  border-radius: 10px;
+  background: rgba(212, 160, 23, 0.1);
+  color: #f0d68a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(22px, 6vw, 30px);
+  letter-spacing: 0.16em;
+  cursor: pointer;
+}
+
+.room-code.is-copied {
+  border-color: #3fa06a;
+  color: #bfe6cf;
+}
+
+.lobby-rules,
+.lobby-note {
+  margin: 0;
+  color: var(--muted, #9db3ad);
+  font-size: 13px;
+}
+
+.lobby-seats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lobby-seat {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.lobby-seat.is-host {
+  border-color: rgba(212, 160, 23, 0.45);
+}
+
+.lobby-seat.is-you {
+  background: rgba(212, 160, 23, 0.07);
+}
+
+.lobby-seat.is-away {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+/* The crown sits over the name here too, not beside it. */
+.lobby-seat .seat-head {
+  position: relative;
+  padding-top: 13px;
+}
+
+.lobby-seat .host-crown {
+  top: -1px;
+  left: 0;
+}
+
+.seat-state {
+  color: var(--muted, #9db3ad);
+  font-size: 12px;
+  text-transform: lowercase;
+}
+
+/* The host's table settings: a labelled group of switches, not a line of loose
+   checkboxes. The bot row sits under them, with the sentence that explains the rule. */
+.lobby-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.lobby-settings-title {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+/* The card set is a choice, not a switch: three tiles in the same segmented control
+   the Settings sheet uses. */
+.lobby-decks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.lobby-decks .hint { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.lobby-toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 6px 18px;
+}
+.lobby-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.lobby-toggle input { flex: none; }
+.lobby-bot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.lobby-toggle { cursor: pointer; }
+.lobby-toggle input:disabled { cursor: not-allowed; }
+.lobby-toggle:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+/* The seat row keeps its controls at the end, with the state word next to the name. */
+.lobby-seat .seat-state { margin-right: auto; margin-left: 10px; }
+.lobby-seat .lobby-remove, .lobby-seat .lobby-bot { margin-left: 6px; }
+
+.lobby-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.lobby-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted, #9db3ad);
+  font-size: 13px;
+}
+
+.lobby-leave {
+  margin-top: 20px;
+}
+
+/* ---- 0.9.8 lobby polish ------------------------------------------------- */
+
+/* The host's bot row is the seat list's footer, not a settings row: dashed like an
+   empty chair, so it reads as "the next seat you can fill". */
+.lobby-bot-row {
+  padding: 10px 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  margin-top: 6px;
+}
+
+/* An empty chair is a seat the table still owes: same row, muted, dashed. */
+.lobby-seat.is-empty {
+  border-style: dashed;
+  opacity: 0.55;
+}
+.lobby-seat.is-empty .seat-name { color: var(--ink-dim); }
+
+/* The reason line sits with the deal button it explains. */
+.lobby-actions .lobby-wait { margin: 0; }
+
+/* The room code is typed in caps and mono: it is a code, not prose. The field sits in
+   the menu's entry row; its own layout is in the setup block above. */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* A spectator's screen says what it is: whose board, and that it is read-only. */
+.watch-note {
+  margin: 8px auto 0;
+  max-width: 640px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted, #9db3ad);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+
+/* The table stopped answering: a bar with a way back in. */
+.conn-chip {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  padding: 6px 10px;
+  max-width: 46rem;
+  border-radius: 8px;
+  background: rgba(120, 30, 30, 0.35);
+  border: 1px solid rgba(200, 90, 90, 0.5);
+  font-size: 0.85rem;
+  color: var(--ink, #eee);
+}
+.conn-chip[hidden] { display: none; }
+.conn-chip .link-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--gold, #d4a017);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+/* Tapping a seat chip switches a spectator's view. */
+.seat.is-tappable {
+  cursor: pointer;
+}
+
+.seat.is-tappable:hover,
+.seat.is-tappable:focus-visible {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.seat.is-viewing {
+  border-color: rgba(120, 190, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(120, 190, 255, 0.3);
+}
+
+/* ------------------------------------------------- history attribution (co-op)
+   Every log line ends with the seat dot of whoever did it, in the same colour as
+   their rail chip. The turn header names them too, for the turn as a whole. */
+
+.history-list li {
+  grid-template-columns: 20px 1fr auto;
+}
+
+.log-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.history-turn-name {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* The name carries its seat colour, so the header reads without hunting for the dot. */
+.history-turn-name.seat-red { color: #e2685f; }
+.history-turn-name.seat-blue { color: #6ea6e8; }
+.history-turn-name.seat-green { color: #63c48c; }
+.history-turn-name.seat-black { color: #cfd6d9; }
+.history-turn-name.seat-grey { color: var(--ink-dim); }
+
+/* --------------------------------------------------- seat bubbles (co-op)
+   A player's last action, beside their name: "Attacked with 9♠". Short-lived, and it
+   overlays the board rather than pushing it, so a bubble never moves a card. */
+
+.seat.has-bubble {
+  z-index: 3;
+}
+
+.seat-bubble {
+  position: absolute;
+  left: 6px;
+  top: calc(100% + 9px);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 220px;
+  padding: 5px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 11px;
+  background: #182b26;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  color: var(--ink, #eef5f2);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* A bubble hangs below its seat, which is exactly where the turn banner is. The rail
+   reserves the strip a bubble needs while one exists (the class is set by the renderer):
+   content shifts by one line instead of a live banner being covered. */
+body.is-coop #seats.has-bubbles { margin-bottom: 34px; }
+body.is-coop .seat-bubble { top: calc(100% + 5px); z-index: 4; }
+
+/* The tail sits on the rail side, so the bubble reads as coming from that seat. */
+.seat-bubble::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 12px;
+  width: 9px;
+  height: 9px;
+  background: #182b26;
+  border-left: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  transform: rotate(45deg);
+}
+
+.seat-bubble .bubble-text {
+  color: var(--muted, #9db3ad);
+}
+
+.seat-bubble .bubble-detail {
+  color: #e6c25a;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.seat-bubble .card-chip,
+.seat-bubble .chip {
+  transform: scale(0.92);
+}
+
+@media (min-width: 1200px) {
+  /* The rail is a column on a desk, so the bubble opens to its right instead. */
+  .seat-bubble {
+    left: calc(100% + 10px);
+    top: 8px;
+  }
+  .seat-bubble::before {
+    top: 12px;
+    left: -5px;
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
+}
+
+/* ==========================================================================
+   THE TABLE (co-op only, D-35)
+
+   The co-op board is the same DOM as the solo board, laid out as a table: the
+   grid lives on .board itself, and .zone-piles dissolves into its children so
+   the played fan can take the middle and the piles the right. Every rule here is
+   scoped to body.is-coop, so solo keeps its own grid untouched.
+
+     seats  banner
+     royal  played  side
+     hand / actions
+   ========================================================================== */
+
+body.is-coop .board {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 200px;
+  grid-template-rows: auto auto auto auto auto;
+  grid-template-areas:
+    'seats  seats  seats'
+    'banner banner banner'
+    'royal  played side'
+    'hand   hand   hand'
+    'actions actions actions';
+  align-items: center;
+  /* Centre the three tracks when the play column is capped (>=1800): without this the
+     whole table sits at the left edge of its own board and the hand looks off-centre. */
+  justify-content: center;
+  gap: 8px 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 0;
+  padding: 6px 16px 10px;
+}
+/* The two wrappers the co-op table needs are not part of the solo DOM's layout: in
+   solo they must not exist as boxes at all, or the board's named grid areas stop
+   matching their children and the whole board collapses to shrink-to-fit. */
+#cloth, #pile-side { display: contents; }
+
+body.is-coop #cloth,
+body.is-coop .zone-piles { display: contents; }
+body.is-coop #seats { grid-area: seats; }
+body.is-coop #turn-banner { grid-area: banner; }
+body.is-coop .zone-enemy { grid-area: royal; }
+body.is-coop #pile-attack { grid-area: played; }
+body.is-coop #pile-side { grid-area: side; }
+body.is-coop .zone-hand { grid-area: hand; }
+body.is-coop .actionbar { grid-area: actions; }
+
+/* ---- the four places ---- */
+body.is-coop #seats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.is-coop .seat {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 9px 6px 11px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-left: 3px solid var(--seat-c, var(--ink-dim));
+}
+body.is-coop .seat.is-you { background: rgba(255, 255, 255, 0.075); }
+body.is-coop .seat.is-active {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--seat-c) 60%, transparent);
+  background: color-mix(in srgb, var(--seat-c) 16%, transparent);
+}
+body.is-coop .seat .seat-who { flex: 1; min-width: 0; }
+body.is-coop .seat .seat-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body.is-coop .seat .seat-state {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+body.is-coop .seat .seat-count {
+  font-size: 12px;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex: none;
+}
+/* F-54: the capacity bar was a coloured rule across the label row, with the "4/7"
+   count stranded at the tile edge. The count says the same thing, so the bar is gone
+   rather than restyled. */
+body.is-coop .seat .seat-last { position: relative; width: 24px; height: 33px; flex: none; }
+body.is-coop .seat .seat-last img {
+  width: 21px;
+  height: 29px;
+  display: block;
+  border-radius: 3px;
+  object-fit: contain;
+  background: var(--card-bg);
+  box-shadow: 0 1px 3px #0007;
+}
+body.is-coop .seat .seat-last .combo {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: var(--panel-2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 9px;
+  line-height: 12px;
+  color: var(--ink);
+}
+body.is-coop .seat .host-crown { position: absolute; top: -6px; left: 9px; width: 13px; height: 13px; }
+body.is-coop .seat .seat-bubble {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 2px);
+  z-index: 6;
+}
+
+/* ---- the banner: whose turn it is, in that seat's colour ---- */
+body.is-coop #turn-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--seat-c) 28%, transparent), transparent 72%);
+  border-left: 3px solid var(--seat-c);
+}
+body.is-coop #turn-banner .dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--seat-c);
+  box-shadow: 0 0 8px var(--seat-c);
+}
+body.is-coop #turn-banner .hint {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- the royal: a reference, not the subject ---- */
+body.is-coop .zone-enemy { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+body.is-coop .enemy-head,
+body.is-coop .suit-legend { display: none; }
+/* The step hint stays: in a room the action bar's "Select cards to pay 9" had no
+   explanation of how to pay, and one playtest table stalled on it (campaign A7). */
+body.is-coop .step-hint { text-align: center; font-size: 12.5px; }
+body.is-coop .enemy-main { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+body.is-coop .enemy-card .card { --card-w: 100px; }
+/* Health and attack sit in one line under the royal. The base rule is a grid with one
+   column; the old `flex-direction: row` here did nothing (playtest 3, note 4). */
+body.is-coop .enemy-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 280px;
+  gap: 8px;
+}
+body.is-coop .stat { padding: 8px 10px; }
+body.is-coop .stat-value { font-size: clamp(22px, 1.7vw, 30px); }
+/* The hand is the player's own row, so it is centred under the table rather than
+   left-aligned against the rail (playtest 3, note 3B). */
+body.is-coop .hand { justify-content: center; }
+body.is-coop .actionbar { justify-content: center; }
+
+/* ---- the played fan: the seat colour is the border, the card is the number ---- */
+body.is-coop #pile-attack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+body.is-coop #pile-attack { align-items: flex-start; }
+body.is-coop #pile-attack .pile-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+body.is-coop .attack-cards { display: flex; gap: 9px; align-items: flex-end; flex-wrap: wrap; }
+body.is-coop .attack-cards .played-card {
+  --card-w: 74px;
+  box-shadow: 0 3px 12px #0007;
+}
+body.is-coop .attack-cards .played-card.has-owner {
+  box-shadow: 0 3px 12px #0007, 0 0 0 2px var(--seat-c);
+}
+
+/* ---- the piles, quiet at the right ---- */
+body.is-coop #pile-side { display: flex; flex-direction: column; gap: 8px; width: 200px; }
+body.is-coop #pile-side .pile-stack,
+body.is-coop #pile-side .pile-jesters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+body.is-coop #pile-side .pile-art {
+  /* A positioning context, not static: the second tavern back is absolutely placed
+     (top 3px, left 5px) and with a static art box it was positioned against the tile
+     and printed over the "tavern" label (note 7). */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 58px;
+  flex: none;
+  /* The fan is wider than one card (three cards, two negative margins and a 7deg
+     rotation ≈ 93 px): clipping it to a 42 px box cut the rear card in half. The tile
+     has room, so the art is allowed to overhang its own box inside the tile. */
+  overflow: visible;
+}
+/* Scoped to a room: these widths are for the side column's tiles, and unscoped they
+   narrowed the solo piles by 34 px — which the solo geometry baseline caught. */
+body.is-coop #tavern-art { width: 54px; }
+body.is-coop #discard-art { width: 96px; }
+/* The empty-slot placeholder is drawn for the solo fan (wide and tall). Inside the
+   42x58 co-op art box it overflowed to 42x92 and printed over the tavern tile
+   (note 8). Filling its own box is the whole fix: the art box is the size contract. */
+body.is-coop #pile-side .pile-art .pile-empty { width: 100%; height: 100%; }
+body.is-coop #pile-side .pile-art .card { flex: none; }
+body.is-coop #pile-side .pile-art .card,
+body.is-coop #pile-side .pile-art .card-back { --card-w-local: 42px; width: 42px; height: 58px; }
+body.is-coop #pile-side .pile-label,
+body.is-coop #pile-side .chip {
+  position: static;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+body.is-coop #pile-side .pile-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+body.is-coop #pile-side .chip .chip-value { font-size: 20px; font-weight: 600; color: var(--ink); }
+body.is-coop #pile-side .pile-stack { flex-direction: row; }
+body.is-coop #pile-side .pile-stack > .pile-label { order: 0; }
+body.is-coop #pile-side .pile-jesters .jester-tray { display: flex; gap: 4px; }
+body.is-coop #pile-side .pile-jesters .card { --card-w: 30px; }
+
+/* A 27" desk: the table grows with it. The play column is capped so the piles stay
+   within pointing distance of the royal, and the furniture gets larger (note 4). */
+@media (min-width: 1800px) {
+  body.is-coop .board {
+    max-width: 1400px;
+    grid-template-columns: 260px minmax(0, 640px) 280px;
+  }
+  body.is-coop .enemy-card .card { --card-w: 150px; }
+  body.is-coop .enemy-stats { max-width: 260px; }
+  body.is-coop .stat-value { font-size: 30px; }
+  body.is-coop #pile-side { width: 280px; }
+  body.is-coop #pile-side .pile-art { width: 56px; height: 78px; }
+  body.is-coop #pile-side .pile-art .card,
+  body.is-coop #pile-side .pile-art .card-back { width: 56px; height: 78px; }
+  body.is-coop #tavern-art { width: 72px; }
+  body.is-coop #discard-art { width: 128px; }
+  body.is-coop #pile-side .chip .chip-value { font-size: 24px; }
+  body.is-coop #pile-side .pile-jesters .card { --card-w: 40px; }
+}
+
+
+   #board is the containing block for the co-op furniture that is positioned inside it. */
+body.is-coop .board { position: relative; }
+
+/* ---- phone scale: 3 % smaller everywhere ------------------------------------
+   The compact layouts are tight on a phone. One zoom shrinks cards, type and
+   gaps together; remove this block to roll the whole change back. Approved by
+   the operator on a device (0.9.6). */
+@media (max-width: 600px) {
+  body { zoom: 0.97; }
+}
+
+/* ---- phone: the lobby's four deck choices wrap 2x2 instead of clipping ---- */
+@media (max-width: 600px) {
+  /* Measured (0.9.8 review): the segmented deck control was 314px of client width
+     for 376px of buttons with overflow hidden, so the Pokemon segment was 59px cut
+     off and untappable. Two rows of two keeps every set reachable. */
+  .lobby-deck-set { flex-wrap: wrap; border-radius: 12px; }
+  .lobby-deck-set .seg { flex: 1 1 45%; }
+  .lobby-deck-set .seg + .seg { border-left: 0; }
+  .lobby-deck-set .seg:nth-child(even) { border-left: 1px solid rgba(242, 240, 230, 0.12); }
+  .lobby-deck-set .seg:nth-child(n+3) { border-top: 1px solid rgba(242, 240, 230, 0.12); }
+
+  /* The rule toggles were 19px-tall touch targets. The row itself is the label, so
+     the whole row becomes the target. */
+  .lobby-toggle { min-height: 44px; align-items: center; }
+
+  /* The code row is the thing a host reads across a room: the code takes the whole
+     first row, the two links share the second (the spectator link used to sit alone
+     with 198px of dead space beside it). */
+  .lobby-code-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+  /* The code is the thing a host reads across a room: full width on its own row. The
+     tiny "room" label is decorative and yields at this width. */
+  .lobby-code-row .lobby-label { display: none; }
+  .lobby-code-row .room-code { grid-column: 1 / -1; }
+  .lobby-code-row .lobby-share { width: 100%; }
+}
+
+/* ---- phone: the same table, two columns ---- */
+@media (max-width: 600px) {
+  body.is-coop .board {
+    /* One column on a phone. The old two-column template put the royal in a 78 px
+       column, which squeezed its stat boxes to ~36 px and clipped the values — the
+       "things not where you expect them" report. */
+    grid-template-columns: minmax(0, 1fr);
+    /* peek and log are rows here because both children are in flow below 559 px:
+       #peek carries grid-area:peek and #log-strip grid-area:log from the solo rules.
+       Without them the browser auto-places both and the board grows implicit tracks —
+       which is what crushed the hand to 144 px and pushed the page to 1238 px tall. */
+    grid-template-rows: auto auto auto auto auto auto auto auto auto;
+    grid-template-areas:
+      'seats'
+      'banner'
+      'royal'
+      'played'
+      'side'
+      'hand'
+      'peek'
+      'log'
+      'actions';
+    gap: 6px 0;
+    padding: 4px 10px 8px;
+  }
+  body.is-coop #seats { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; }
+  /* The royal and its counters sit side by side again, now across the full width. */
+  body.is-coop .enemy-main { flex-direction: row; align-items: center; gap: 10px; }
+  body.is-coop .enemy-stats { grid-template-columns: 1fr 1fr; width: 100%; }
+  body.is-coop #seats { gap: 4px; }
+  /* One compact line per seat: name, a bot/away tag when it applies, hand count.
+     The state word and the action bubble are hidden — the turn banner names whose
+     turn it is, and the reveal says what was just played. The active seat keeps its
+     glow and colour bar, so the rail still reads at a glance. */
+  body.is-coop .seat {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 5px 2px 6px;
+    border-left-width: 2px;
+    border-top-width: 0;
+    border-radius: 7px;
+  }
+  body.is-coop .seat .seat-who { display: flex; align-items: baseline; min-width: 0; }
+  body.is-coop .seat .seat-name { font-size: 11.5px; line-height: 1.2; text-align: left; }
+  body.is-coop .seat .seat-state { display: none; }
+  body.is-coop .seat.is-bot .seat-name::after,
+  body.is-coop .seat.is-away .seat-name::after {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-left: 4px;
+  }
+  body.is-coop .seat.is-bot .seat-name::after { content: "bot"; }
+  body.is-coop .seat.is-away .seat-name::after { content: "away"; }
+  body.is-coop .seat .seat-count { font-size: 10.5px; }
+  body.is-coop .seat .seat-last { display: none; }
+  body.is-coop .seat-bubble { display: none; }
+  body.is-coop #turn-banner { font-size: 12px; padding: 5px 9px; }
+  body.is-coop #turn-banner .hint { display: none; }
+  body.is-coop .enemy-card .card { --card-w: 62px; }
+  body.is-coop .attack-cards .mini { min-width: 54px; height: 75px; font-size: 16px; }
+  body.is-coop #pile-side { width: auto; flex-direction: row; gap: 6px; }
+  body.is-coop #pile-side .pile-stack,
+  body.is-coop #pile-side .pile-jesters { flex: 1; }
+  /* The art box must be at least the card it draws: a 26x36 box around 44x59 cards
+     cropped every discard to a corner fragment. Cards scale down to the box instead. */
+  body.is-coop #pile-side .pile-art { width: 34px; height: 47px; overflow: visible; }
+  body.is-coop #pile-side .pile-art .card,
+  body.is-coop #pile-side .pile-art .card-back { width: 32px; height: 44px; }
+  /* One card in the phone fan: the chip carries the count, the fan is decoration. */
+  body.is-coop #discard-art .card:nth-child(n + 2) { display: none; }
+  body.is-coop #pile-side .pile-label { font-size: 9px; }
+  body.is-coop .hand .card { width: 56px; height: 79px; }
+  /* A refusal sentence on a border-radius:999px button became a 126x71 blob that hid
+     the controls behind it. Own row, sane radius, and it may wrap. */
+  /* In game the title bar is just the crown and Menu: the wordmark is menu chrome. */
+  body.is-coop .topbar { min-height: 0; padding-top: 2px; padding-bottom: 2px; }
+  body.is-coop .brand-text { display: none; }
+  /* Menu sheet on a phone: one row shape for the doors, one small shape for the
+     table actions. The mix of 48 px centred pills and 30 px controls read as a
+     pile of different buttons. */
+  #nav-sheet .sheet { padding: 14px; }
+  #nav-sheet h2 { font-size: 15px; }
+  .nav-list { gap: 6px; }
+  /* 44px is the phone touch floor the lobby set (0.9.8): the nav's 36px rows and
+     30px small pills were the last hold-outs, and 8 rows at 44px still fit. */
+  .nav-item {
+    min-height: 44px;
+    padding: 0 12px;
+    font-size: 14px;
+    justify-content: flex-start;
+    border-radius: 9px;
+  }
+  #nav-sheet .ghost.small {
+    min-height: 44px;
+    padding: 3px 9px;
+    font-size: 11.5px;
+    border-radius: 8px;
+  }
+  #nav-sheet .nav-table { padding: 10px; gap: 6px; }
+  #nav-sheet .nav-table-row { min-height: 30px; gap: 6px; }
+  #nav-sheet .nav-room { padding: 8px 10px; }
+  body.is-coop .actionbar { flex-wrap: wrap; }
+  /* The peek is the readable card while choosing. A full 280 px panel scrolled the
+     page and hid the royal; one compact row keeps royal and hand on screen. */
+  body.is-coop .peek {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 5px 8px;
+    max-height: 132px;
+    overflow-y: auto;
+  }
+  body.is-coop .peek .zoom-card { display: flex; align-items: center; gap: 8px; text-align: left; }
+  body.is-coop .peek .zoom-card .card { --card-w-local: 52px; width: 52px; height: 73px; flex: none; }
+  body.is-coop .peek .zoom-caption { max-width: none; text-align: left; gap: 3px; }
+  body.is-coop .peek .pick-btn { flex: none; }
+  body.is-coop .actionbar #btn-confirm {
+    flex: 1 1 100%;
+    border-radius: 12px;
+    min-height: var(--tap, 44px);
+    white-space: normal;
+    line-height: 1.25;
+    padding: 10px 12px;
+  }
+}
+
+/* The room's own facts, at the top of the Menu sheet: the code you read out, and the
+   link you paste. The header carries the name and the mode; nothing else. */
+.nav-room {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.nav-room-code {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+}
+.nav-room-label {
+  font-size: 10px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-right: auto;
+}
+
+/* Sheets for the two piles: every card large enough to read, with the player's colour
+   on the cards they played. */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+  gap: 10px 8px;
+  margin: 10px 0 14px;
+}
+.card-grid-item { position: relative; display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.card-grid-item .card { --card-w: 58px; }
+.card-grid-item.has-owner .card { box-shadow: 0 2px 10px #0007, 0 0 0 2px var(--seat-c); }
+.card-grid-who {
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+body.is-coop #pile-attack.is-openable { cursor: pointer; }
+body.is-coop #pile-attack.is-openable:hover .pile-label { color: var(--gold); }
+body.is-coop #pile-attack.is-openable .pile-label::after { content: ' · all'; color: var(--gold); opacity: 0.8; }
+.played-more {
+  align-self: flex-end;
+  margin-bottom: 6px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--panel-2);
+  color: var(--ink);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.played-more:hover { background: var(--gold); color: #1a1206; }
+
+/* The host's controls over the table, in the Menu sheet: who is away, the one-use link
+   to bring them back, the seat they can hand on, and the switch that ends it all. */
+.nav-table {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.nav-table h2 { margin: 0 0 6px; font-size: 13px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-dim); }
+.nav-table-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 13px;
+}
+.nav-table-row span { margin-right: auto; }
+.nav-watcher-list { margin: 0; padding: 0 0 0 18px; font-size: 13px; color: var(--ink-dim); }
+.nav-watcher-list li { padding: 2px 0; }
+.nav-table .nav-danger { color: #e8887e; border-color: rgba(208, 90, 78, 0.45); }
+/* The 8 px gap belongs to the standalone "Close the table" action, not to a Kick
+   pill sitting in a row of equally tall buttons (it pushed that one 8 px down). */
+.nav-table > .nav-danger { margin-top: 8px; }
+.nav-table .nav-danger:hover { background: rgba(208, 90, 78, 0.16); color: #ffb4aa; }
+
+/* F-22: a bubble is a sentence, so it wraps. It used to be nowrap and ran off the
+   side of a 390 px screen on a long play. */
+.seat-bubble,
+.bubble {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: min(22rem, 78vw);
+}
+
+/* The Jester's "who goes next?" question sits in the action bar, in the colours of the
+   seats it offers, because the answer is a seat and not a button. */
+body.is-coop .seat-choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.2rem;
+}
+body.is-coop .seat-choice-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+body.is-coop .seat-choice-btn { min-height: var(--tap, 44px); }
+body.is-coop .seat-choice-btn::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  margin-right: 0.45rem;
+  background: var(--seat-c, var(--ink-dim));
+  display: inline-block;
+}
+body.is-coop .seat-choice-btn.seat-red { --seat-c: var(--seat-red); }
+body.is-coop .seat-choice-btn.seat-blue { --seat-c: var(--seat-blue); }
+body.is-coop .seat-choice-btn.seat-green { --seat-c: var(--seat-green); }
+body.is-coop .seat-choice-btn.seat-black { --seat-c: var(--seat-black); }
+
+/* The rail count is "6/6": the hand size is public, the limit is what makes it read. */
+body.is-coop .seat-count b { font-weight: 700; }
+body.is-coop .seat-count i { font-style: normal; opacity: 0.65; }
+
+/* Open tables on the setup screen (D-39): the code is a convenience, not a rite. */
+.room-list { margin-top: 0.75rem; display: grid; gap: 0.4rem; }
+.room-list-title {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.room-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+.room-label { display: flex; align-items: baseline; gap: 0.6rem; min-width: 0; }
+.room-code { font-family: var(--mono, ui-monospace, monospace); letter-spacing: 0.12em; }
+.room-meta { font-size: 0.78rem; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room-row .ghost { min-height: var(--tap, 44px); }
+
+/* A bot seat is a chair held for someone: same place, marked, never pretending. */
+body.is-coop .seat.is-bot { border-left-style: dashed; }
+body.is-coop .seat.is-bot .seat-state { color: var(--gold); }
+
+/* A finished game: the board stops offering actions. The result sheet is modal, so the
+   controls behind it must not look pressable. */
+body.is-over .actionbar { opacity: 0.45; }
+body.is-over .actionbar button { pointer-events: none; }
+
+/* ---- landscape phone: short and wide -------------------------------------
+   A phone on its side is 844x390 CSS px: too wide for the phone breakpoint, too short
+   for the desktop three-column grid, which put the hand and the action bar off the
+   bottom. Two columns buy back the height the three-column grid wasted; on an 844x390
+   device the table still runs past the fold (the action bar sits below it), which is a
+   known limit. */
+@media (orientation: landscape) and (max-height: 520px) {
+  body.is-coop .board {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'seats   banner'
+      'royal   side'
+      'played  played'
+      'hand    hand'
+      'actions actions';
+    gap: 4px 10px;
+    padding: 2px 10px 4px;
+  }
+  body.is-coop #seats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  body.is-coop .seat { flex-direction: row; padding: 3px 6px; border-left-width: 3px; border-top-width: 0; }
+  body.is-coop .seat .seat-state,
+  body.is-coop .seat .seat-last { display: none; }
+  body.is-coop .zone-hand { min-height: 0; }
+  body.is-coop .hand .card { width: 48px; height: 68px; }
+  body.is-coop .actionbar { padding-block: 3px; }
+  body.is-coop #turn-banner { font-size: 12px; padding: 3px 8px; }
+}
+
+/* A sheet's title receives focus so a screen reader announces the dialog. That is a
+   programmatic focus, not keyboard navigation, and Firefox drew a focus rectangle around
+   the heading that read as a broken input. */
+.sheet h2:focus,
+.sheet h3:focus,
+.sheet [tabindex='-1']:focus { outline: none; }
+
+/* ---------- the rules video link ---------- */
+.rules-video a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  border: 1px solid color-mix(in srgb, var(--gold) 65%, transparent);
+  border-radius: 999px;
+  color: var(--gold);
+  font-weight: 600;
+  text-decoration: none;
+}
+.rules-video a:hover,
+.rules-video a:focus-visible {
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+.rules-video a span { font-size: 11px; }
+
+/* ---------- the table reveal: a play or a payment, shown to the other seats ---------- */
+/* Fixed and pointer-transparent: it is a thing to see, never a thing to dismiss. The
+   cards fly to the pile they belong in, so the eye follows them to where they went. */
+.table-reveal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 60;
+  pointer-events: none;
+  padding: 16px;
+}
+.table-reveal.is-fading { opacity: 0; transition: opacity 260ms ease-out; }
+.reveal-panel {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 14px 18px 18px;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at center, rgba(8, 26, 22, 0.94), rgba(8, 26, 22, 0.78));
+  border: 1px solid color-mix(in srgb, var(--seat-c) 60%, transparent);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+  transform: scale(0.94);
+  animation: revealIn 220ms ease-out forwards;
+}
+@keyframes revealIn { to { transform: scale(1); } }
+.reveal-symbol { color: var(--seat-c); line-height: 0; }
+.reveal-symbol svg { width: clamp(30px, 4vw, 46px); height: clamp(30px, 4vw, 46px); }
+.reveal-label {
+  margin: 0;
+  font-size: clamp(13px, 1.6vw, 16px);
+  letter-spacing: 0.02em;
+  color: var(--ink, #eef5f2);
+}
+.reveal-label b { color: var(--seat-c); }
+.reveal-cards { display: flex; gap: clamp(6px, 1vw, 12px); align-items: center; }
+.reveal-card {
+  width: clamp(70px, 9vw, 128px);
+  aspect-ratio: 2.5 / 3.5;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.6);
+}
+/* Royal news is the table's, not a seat's: a crown, the royal's name, and its face
+   larger than a played card. It fades in place because it has no pile to fly to. */
+.table-reveal.is-royal .reveal-panel {
+  gap: 10px;
+  padding: 16px 22px 20px;
+  border-color: color-mix(in srgb, var(--seat-c) 70%, transparent);
+}
+.table-reveal.is-royal .reveal-symbol svg { width: clamp(34px, 5vw, 52px); height: clamp(34px, 5vw, 52px); }
+.table-reveal.is-royal .reveal-label { font-size: clamp(15px, 2vw, 20px); }
+.table-reveal.is-royal .reveal-card {
+  width: clamp(104px, 15vw, 176px);
+  border: 1px solid color-mix(in srgb, var(--seat-c) 55%, transparent);
+}
+body.anim-off .reveal-panel { animation: none; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal-panel { animation: none; transform: none; }
+}
+
+/* ---------- the two Jester slots in Settings ---------- */
+.joker-slots { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0 10px; }
+.joker-slot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(242, 240, 230, 0.18);
+  background: rgba(9, 26, 23, 0.55);
+  color: var(--ink, #eef5f2);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.joker-slot img { width: 34px; aspect-ratio: 2.5 / 3.5; object-fit: cover; border-radius: 4px; }
+.joker-slot-label { font-size: 12.5px; }
+.joker-slot.is-on { border-color: var(--gold); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 45%, transparent); }
+.joker-tile { position: relative; }
+.joker-slot-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 17px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #101a17;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
+}
+.joker-slot-badge[hidden] { display: none; }
+.preview { flex-wrap: wrap; }

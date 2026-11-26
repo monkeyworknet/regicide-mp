@@ -1,0 +1,223 @@
+{
+ "version": 1,
+ "size": 480,
+ "back": "back.webp",
+ "cards": {
+  "AC": {
+   "file": "ac.webp",
+   "name": "Articuno"
+  },
+  "JC": {
+   "file": "jc.webp",
+   "name": "Leader Misty"
+  },
+  "6S": {
+   "file": "6s.webp",
+   "name": "Kangaskhan"
+  },
+  "QH": {
+   "file": "qh.webp",
+   "name": "Leader Koga"
+  },
+  "5H": {
+   "file": "5h.webp",
+   "name": "Chansey"
+  },
+  "KD": {
+   "file": "kd.webp",
+   "name": "Elite Lance"
+  },
+  "KH": {
+   "file": "kh.webp",
+   "name": "Elite Agatha"
+  },
+  "8C": {
+   "file": "8c.webp",
+   "name": "Tentacruel"
+  },
+  "5S": {
+   "file": "5s.webp",
+   "name": "Kingler"
+  },
+  "QD": {
+   "file": "qd.webp",
+   "name": "Leader Sabrina"
+  },
+  "2S": {
+   "file": "2s.webp",
+   "name": "Mankey"
+  },
+  "9C": {
+   "file": "9c.webp",
+   "name": "Snorlax"
+  },
+  "AH": {
+   "file": "ah.webp",
+   "name": "Mew"
+  },
+  "3C": {
+   "file": "3c.webp",
+   "name": "Magnemite"
+  },
+  "4H": {
+   "file": "4h.webp",
+   "name": "Butterfree"
+  },
+  "5C": {
+   "file": "5c.webp",
+   "name": "Seadra"
+  },
+  "QS": {
+   "file": "qs.webp",
+   "name": "Leader Blaine"
+  },
+  "3S": {
+   "file": "3s.webp",
+   "name": "Cubone"
+  },
+  "10H": {
+   "file": "10h.webp",
+   "name": "Venusaur"
+  },
+  "9H": {
+   "file": "9h.webp",
+   "name": "Exeggutor"
+  },
+  "JS": {
+   "file": "js.webp",
+   "name": "Leader Brock"
+  },
+  "10C": {
+   "file": "10c.webp",
+   "name": "Blastoise"
+  },
+  "6C": {
+   "file": "6c.webp",
+   "name": "Omastar"
+  },
+  "3H": {
+   "file": "3h.webp",
+   "name": "Meowth"
+  },
+  "AS": {
+   "file": "as.webp",
+   "name": "Moltres"
+  },
+  "9D": {
+   "file": "9d.webp",
+   "name": "Ninetales"
+  },
+  "J1": {
+   "file": "j1.webp",
+   "name": "Ditto"
+  },
+  "10D": {
+   "file": "10d.webp",
+   "name": "Jolteon"
+  },
+  "8D": {
+   "file": "8d.webp",
+   "name": "Scyther"
+  },
+  "KC": {
+   "file": "kc.webp",
+   "name": "Elite Lorelei"
+  },
+  "2C": {
+   "file": "2c.webp",
+   "name": "Sandshrew"
+  },
+  "3D": {
+   "file": "3d.webp",
+   "name": "Doduo"
+  },
+  "JH": {
+   "file": "jh.webp",
+   "name": "Leader Erika"
+  },
+  "KS": {
+   "file": "ks.webp",
+   "name": "Elite Bruno"
+  },
+  "2D": {
+   "file": "2d.webp",
+   "name": "Bellsprout"
+  },
+  "9S": {
+   "file": "9s.webp",
+   "name": "Pinsir"
+  },
+  "J2": {
+   "file": "j2.webp",
+   "name": "Porygon"
+  },
+  "7D": {
+   "file": "7d.webp",
+   "name": "Electabuzz"
+  },
+  "4D": {
+   "file": "4d.webp",
+   "name": "Beedrill"
+  },
+  "AD": {
+   "file": "ad.webp",
+   "name": "Zapdos"
+  },
+  "7H": {
+   "file": "7h.webp",
+   "name": "Slowbro"
+  },
+  "JD": {
+   "file": "jd.webp",
+   "name": "Leader Surge"
+  },
+  "6H": {
+   "file": "6h.webp",
+   "name": "Jynx"
+  },
+  "6D": {
+   "file": "6d.webp",
+   "name": "Pidgeot"
+  },
+  "4C": {
+   "file": "4c.webp",
+   "name": "Kabuto"
+  },
+  "2H": {
+   "file": "2h.webp",
+   "name": "Jigglypuff"
+  },
+  "7C": {
+   "file": "7c.webp",
+   "name": "Golduck"
+  },
+  "4S": {
+   "file": "4s.webp",
+   "name": "Raticate"
+  },
+  "8S": {
+   "file": "8s.webp",
+   "name": "Magmar"
+  },
+  "QC": {
+   "file": "qc.webp",
+   "name": "Leader Giovanni"
+  },
+  "7S": {
+   "file": "7s.webp",
+   "name": "Tauros"
+  },
+  "5D": {
+   "file": "5d.webp",
+   "name": "Dugtrio"
+  },
+  "10S": {
+   "file": "10s.webp",
+   "name": "Charizard"
+  },
+  "8H": {
+   "file": "8h.webp",
+   "name": "Clefable"
+  }
+ }
+}

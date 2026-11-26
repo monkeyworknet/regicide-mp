@@ -1,0 +1,33 @@
+[Unit]
+# Template for a systemd host. @ROOT@ and @USER@ are substituted by
+# scripts/install-service.sh with the checkout path and the installing user.
+# The OpenRC template (regicide-mp.openrc) describes the same process.
+Description=Regicide multiplayer server (solo + co-op) on :8321
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+Group=@USER@
+WorkingDirectory=@ROOT@
+
+# The OpenRC unit created this in start_pre(). The binary writes its boot log
+# here and the game keeps its on-disk state in ./data.
+ExecStartPre=/bin/mkdir -p @ROOT@/.run
+
+ExecStart=@ROOT@/bin/regicide -addr :8321 -data ./data
+
+# Restart=always, not on-failure: the server can exit 0 on a clean shutdown and
+# it must still come back, because the table is stateful on disk and a restart
+# is a reconnect, not data loss. respawn_delay=5 on OpenRC is RestartSec=5 here.
+Restart=always
+RestartSec=5
+
+# Append rather than truncate: this log is the first thing to read when the
+# table will not come up, so it must survive restarts.
+StandardOutput=append:@ROOT@/.run/regicide-boot.log
+StandardError=append:@ROOT@/.run/regicide-boot.log
+
+[Install]
+WantedBy=multi-user.target

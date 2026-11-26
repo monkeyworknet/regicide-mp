@@ -1,0 +1,383 @@
+{
+  "desktop": {
+    "board": {
+      "x": 28,
+      "y": 97,
+      "w": 1384,
+      "h": 768,
+      "display": "grid",
+      "area": "auto"
+    },
+    "topbar": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 69,
+      "display": "flex",
+      "area": "auto"
+    },
+    "cloth": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "contents",
+      "area": "auto"
+    },
+    "enemy": {
+      "x": 28,
+      "y": 210,
+      "w": 582,
+      "h": 288,
+      "display": "grid",
+      "area": "enemy"
+    },
+    "royal": {
+      "x": 133,
+      "y": 248,
+      "w": 130,
+      "h": 181,
+      "display": "flex",
+      "area": "auto"
+    },
+    "stats": {
+      "x": 275,
+      "y": 258,
+      "w": 230,
+      "h": 162,
+      "display": "grid",
+      "area": "auto"
+    },
+    "seats": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "none",
+      "area": "seats"
+    },
+    "piles": {
+      "x": 624,
+      "y": 210,
+      "w": 788,
+      "h": 196,
+      "display": "grid",
+      "area": "piles"
+    },
+    "pile-side": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "contents",
+      "area": "auto"
+    },
+    "tavern": {
+      "x": 800,
+      "y": 210,
+      "w": 114,
+      "h": 196,
+      "display": "grid",
+      "area": "1 / 1"
+    },
+    "discard": {
+      "x": 926,
+      "y": 210,
+      "w": 114,
+      "h": 196,
+      "display": "grid",
+      "area": "1 / 2"
+    },
+    "jesters": {
+      "x": 1052,
+      "y": 210,
+      "w": 184,
+      "h": 196,
+      "display": "grid",
+      "area": "1 / 3"
+    },
+    "hand": {
+      "x": 28,
+      "y": 512,
+      "w": 1384,
+      "h": 158,
+      "display": "flex",
+      "area": "auto"
+    },
+    "actions": {
+      "x": 510,
+      "y": 684,
+      "w": 420,
+      "h": 68,
+      "display": "flex",
+      "area": "actions"
+    },
+    "__counts": {
+      "hand": 8,
+      "coop": false
+    },
+    "__handGroup": {
+      "x": 271,
+      "right": 1169,
+      "w": 898
+    },
+    "__view": {
+      "w": 1440,
+      "h": 900
+    }
+  },
+  "phone": {
+    "board": {
+      "x": 12,
+      "y": 42,
+      "w": 367,
+      "h": 646,
+      "display": "grid",
+      "area": "auto"
+    },
+    "topbar": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 30,
+      "display": "flex",
+      "area": "auto"
+    },
+    "cloth": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "contents",
+      "area": "auto"
+    },
+    "enemy": {
+      "x": 12,
+      "y": 42,
+      "w": 367,
+      "h": 203,
+      "display": "grid",
+      "area": "enemy"
+    },
+    "royal": {
+      "x": 36,
+      "y": 72,
+      "w": 83,
+      "h": 117,
+      "display": "flex",
+      "area": "auto"
+    },
+    "stats": {
+      "x": 131,
+      "y": 72,
+      "w": 223,
+      "h": 117,
+      "display": "grid",
+      "area": "auto"
+    },
+    "seats": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "none",
+      "area": "seats"
+    },
+    "piles": {
+      "x": 12,
+      "y": 251,
+      "w": 367,
+      "h": 117,
+      "display": "grid",
+      "area": "piles"
+    },
+    "pile-side": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "contents",
+      "area": "auto"
+    },
+    "tavern": {
+      "x": 12,
+      "y": 251,
+      "w": 116,
+      "h": 117,
+      "display": "grid",
+      "area": "1 / 1"
+    },
+    "discard": {
+      "x": 137,
+      "y": 251,
+      "w": 116,
+      "h": 117,
+      "display": "grid",
+      "area": "1 / 2"
+    },
+    "jesters": {
+      "x": 263,
+      "y": 251,
+      "w": 116,
+      "h": 117,
+      "display": "grid",
+      "area": "1 / 3"
+    },
+    "hand": {
+      "x": 12,
+      "y": 373,
+      "w": 367,
+      "h": 209,
+      "display": "flex",
+      "area": "auto"
+    },
+    "actions": {
+      "x": 12,
+      "y": 623,
+      "w": 367,
+      "h": 65,
+      "display": "flex",
+      "area": "actions"
+    },
+    "__counts": {
+      "hand": 8,
+      "coop": false
+    },
+    "__handGroup": {
+      "x": 44,
+      "right": 346,
+      "w": 301
+    },
+    "__view": {
+      "w": 390,
+      "h": 844
+    }
+  },
+  "wide": {
+    "board": {
+      "x": 528,
+      "y": 97,
+      "w": 1504,
+      "h": 1468,
+      "display": "grid",
+      "area": "auto"
+    },
+    "topbar": {
+      "x": 0,
+      "y": 0,
+      "w": 2560,
+      "h": 69,
+      "display": "flex",
+      "area": "auto"
+    },
+    "cloth": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "contents",
+      "area": "auto"
+    },
+    "enemy": {
+      "x": 528,
+      "y": 513,
+      "w": 633,
+      "h": 342,
+      "display": "grid",
+      "area": "enemy"
+    },
+    "royal": {
+      "x": 640,
+      "y": 551,
+      "w": 168,
+      "h": 235,
+      "display": "flex",
+      "area": "auto"
+    },
+    "stats": {
+      "x": 820,
+      "y": 588,
+      "w": 230,
+      "h": 162,
+      "display": "grid",
+      "area": "auto"
+    },
+    "seats": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "none",
+      "area": "seats"
+    },
+    "piles": {
+      "x": 1175,
+      "y": 513,
+      "w": 857,
+      "h": 252,
+      "display": "grid",
+      "area": "piles"
+    },
+    "pile-side": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "contents",
+      "area": "auto"
+    },
+    "tavern": {
+      "x": 1306,
+      "y": 513,
+      "w": 154,
+      "h": 252,
+      "display": "grid",
+      "area": "1 / 1"
+    },
+    "discard": {
+      "x": 1472,
+      "y": 513,
+      "w": 154,
+      "h": 252,
+      "display": "grid",
+      "area": "1 / 2"
+    },
+    "jesters": {
+      "x": 1638,
+      "y": 513,
+      "w": 264,
+      "h": 252,
+      "display": "grid",
+      "area": "1 / 3"
+    },
+    "hand": {
+      "x": 528,
+      "y": 869,
+      "w": 1504,
+      "h": 198,
+      "display": "flex",
+      "area": "auto"
+    },
+    "actions": {
+      "x": 1070,
+      "y": 1081,
+      "w": 420,
+      "h": 68,
+      "display": "flex",
+      "area": "actions"
+    },
+    "__counts": {
+      "hand": 8,
+      "coop": false
+    },
+    "__handGroup": {
+      "x": 718,
+      "right": 1842,
+      "w": 1125
+    },
+    "__view": {
+      "w": 2560,
+      "h": 1600
+    }
+  }
+}

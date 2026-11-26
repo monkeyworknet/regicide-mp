@@ -1,0 +1,23 @@
+{
+ "version": 1,
+ "note": "event -> candidate files; the client picks a random take when there are several",
+ "files": {
+  "deal": ["shuffle_riffle_01.ogg", "card_deal_01.ogg"],
+  "play": ["card_flip_table_01.ogg", "card_place_wood_01.ogg"],
+  "draw": ["card_draw_fast_01.ogg"],
+  "discard": ["card_flip_01.ogg"],
+  "damage": ["hit_light_01.ogg"],
+  "heal": ["heal_01.ogg"],
+  "reveal": ["card_reveal_rare.ogg"],
+  "turn": ["turn_start.ogg"],
+  "victory": ["victory.ogg"],
+  "leaderboard": ["slot_win_small_01.ogg"],
+  "enemy_attack": ["synth_enemy_attack.ogg"],
+  "defeat": ["synth_defeat.ogg"],
+  "shield": ["synth_shield.ogg"],
+  "combo": ["synth_combo.ogg"],
+  "jester": ["synth_jester.ogg"],
+  "ui": ["synth_ui_click.ogg"],
+  "tier": ["synth_tier.ogg"]
+ }
+}

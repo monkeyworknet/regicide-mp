@@ -1,0 +1,174 @@
+{
+ "version": 1,
+ "default": "official",
+ "themes": [
+  {
+   "id": "official",
+   "label": "Official",
+   "hasText": false,
+   "dir": "/img/official",
+   "defaultBack": "official",
+   "defaultJokers": [
+    "official",
+    "official"
+   ]
+  },
+  {
+   "id": "simple",
+   "label": "Simple",
+   "hasText": false,
+   "dir": "/img/simple",
+   "defaultBack": "red"
+  },
+  {
+   "id": "8bit",
+   "label": "Standard",
+   "hasText": false,
+   "dir": "/img/8bit",
+   "defaultBack": "8bit",
+   "pixelated": true
+  },
+  {
+   "id": "pokemon",
+   "label": "Pokémon",
+   "hasText": false,
+   "dir": "/img/pokemon",
+   "defaultBack": "pokemon",
+   "defaultJokers": [
+    "ditto",
+    "porygon"
+   ]
+  }
+ ],
+ "defaultBack": "black",
+ "backs": [
+  {
+   "id": "8bit",
+   "label": "8bit",
+   "path": "/img/backs/8bit.webp"
+  },
+  {
+   "id": "black",
+   "label": "Black",
+   "path": "/img/backs/black.webp"
+  },
+  {
+   "id": "blue",
+   "label": "Blue",
+   "path": "/img/backs/blue.webp"
+  },
+  {
+   "id": "casino-blue",
+   "label": "Casino blue",
+   "path": "/img/backs/casino-blue.webp"
+  },
+  {
+   "id": "casino-red",
+   "label": "Casino red",
+   "path": "/img/backs/casino-red.webp"
+  },
+  {
+   "id": "green",
+   "label": "Green",
+   "path": "/img/backs/green.webp"
+  },
+  {
+   "id": "orange",
+   "label": "Orange",
+   "path": "/img/backs/orange.webp"
+  },
+  {
+   "id": "purple",
+   "label": "Purple",
+   "path": "/img/backs/purple.webp"
+  },
+  {
+   "id": "red",
+   "label": "Red",
+   "path": "/img/backs/red.webp"
+  },
+  {
+   "id": "official",
+   "label": "Official back",
+   "path": "/img/official/back.webp"
+  },
+  {
+   "id": "pokemon",
+   "label": "Pokémon back",
+   "path": "/img/pokemon/back.webp"
+  }
+ ],
+ "defaultJoker": "jester",
+ "jokers": [
+  {
+   "id": "official",
+   "label": "Original",
+   "path": "/img/jokers/official.webp"
+  },
+  {
+   "id": "jester",
+   "label": "Jester",
+   "path": "/img/jokers/jester.webp"
+  },
+  {
+   "id": "ditto",
+   "label": "Ditto",
+   "path": "/img/jokers/ditto.webp"
+  },
+  {
+   "id": "porygon",
+   "label": "Porygon",
+   "path": "/img/jokers/porygon.webp"
+  },
+  {
+   "id": "bower",
+   "label": "Bower",
+   "path": "/img/jokers/bower.webp"
+  },
+  {
+   "id": "crown",
+   "label": "Crown",
+   "path": "/img/jokers/crown.webp"
+  },
+  {
+   "id": "card-table",
+   "label": "Card Table",
+   "path": "/img/jokers/card-table.webp"
+  },
+  {
+   "id": "banner",
+   "label": "Banner",
+   "path": "/img/jokers/banner.webp"
+  },
+  {
+   "id": "shadow",
+   "label": "Shadow",
+   "path": "/img/jokers/shadow.webp"
+  },
+  {
+   "id": "staff",
+   "label": "Staff",
+   "path": "/img/jokers/staff.webp"
+  },
+  {
+   "id": "ribbon",
+   "label": "Ribbon",
+   "path": "/img/jokers/ribbon.webp"
+  },
+  {
+   "id": "puppet",
+   "label": "Puppet",
+   "path": "/img/jokers/puppet.webp"
+  }
+ ],
+ "furniture": {
+  "chip_black": "/img/furniture/chip_black.webp",
+  "chip_blue": "/img/furniture/chip_blue.webp",
+  "chip_green": "/img/furniture/chip_green.webp",
+  "chip_orange": "/img/furniture/chip_orange.webp",
+  "chip_purple": "/img/furniture/chip_purple.webp",
+  "chip_red": "/img/furniture/chip_red.webp",
+  "chip_white": "/img/furniture/chip_white.webp",
+  "die_1": "/img/furniture/die_1.webp"
+ }
+}

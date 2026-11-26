@@ -1,0 +1,64 @@
+{
+ "jokers": [
+  {
+   "id": "official",
+   "label": "Original",
+   "source": "j1.webp"
+  },
+  {
+   "id": "jester",
+   "label": "Jester",
+   "source": "joker-default.jpg"
+  },
+  {
+   "id": "ditto",
+   "label": "Ditto",
+   "source": "j1.webp"
+  },
+  {
+   "id": "porygon",
+   "label": "Porygon",
+   "source": "j2.webp"
+  },
+  {
+   "id": "bower",
+   "label": "Bower",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "crown",
+   "label": "Crown",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "card-table",
+   "label": "Card Table",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "banner",
+   "label": "Banner",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "shadow",
+   "label": "Shadow",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "staff",
+   "label": "Staff",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "ribbon",
+   "label": "Ribbon",
+   "source": "joker-sheet.jpg"
+  },
+  {
+   "id": "puppet",
+   "label": "Puppet",
+   "source": "joker-sheet.jpg"
+  }
+ ]
+}
